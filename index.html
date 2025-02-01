@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>삼육대학교 시간표 마법사</title>
+    <meta
+      name="ciewport"
+      content="user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,width=device-width"
+    />
+    <meta name="robots" content="index,nofollow" />
+    <meta
+      name="keywords"
+      content="삼육대학교, 시간표, 마법사, 학기 계획, 시간표 만들기"
+    />
+    <meta
+      name="description"
+      content="효율적인 학기 계획을 위한 나만의 맞춤형 시간표를 만들어 보세요."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="삼육대학교 시간표 마법사" />
+    <meta
+      property="og:image"
+      content="https://www.syu.kr/assets/img/banner.png"
+    />
+    <meta property="og:url" content="https://www.lecture.com/timetable" />
+    <meta
+      property="og:description"
+      content="효율적인 학기 계획을 위한 나만의 맞춤형 시간표를 만들어 보세요."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="https://www.syu.kr/favicon/favicon.ico" />
+    <link
+      rel="preload"
+      href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/NanumSquareEB.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/NanumSquareB.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/NanumSquareR.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <style>
+      @font-face {
+        font-family: "NanumSquare";
+        font-weight: 800;
+        src: url(https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/NanumSquareEB.woff2)
+          format("woff2");
+      }
+      @font-face {
+        font-family: "NanumSquare";
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/NanumSquareB.woff2)
+          format("woff2");
+      }
+      @font-face {
+        font-family: "NanumSquare";
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/NanumSquareR.woff2)
+          format("woff2");
+      }
+    </style>
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-8E24NNDK21"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-8E24NNDK21");
+    </script>
+    <style>
+      html,
+      body {
+        font-family: "NanumSquare", sans-serif;
+        font-weight: 800;
+        margin: 0 auto;
+        padding: 0;
+        position: relative;
+        background-color: #f0f4ff;
+        max-width: 800px;
+      }
+
+      button {
+        font-family: "NanumSquare", sans-serif;
+        font-weight: 800;
+      }
+
+      .searchStyle {
+        border: none;
+        border-radius: 4px;
+        color: #0076ff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      #searchButton {
+        font-size: 0.9em;
+        color: #0076ff;
+        background-color: rgb(51 93 255 / 10%);
+        margin-right: 15px;
+      }
+
+      #prevButton,
+      #nextButton,
+      #statusText {
+        font-size: 0.8rem;
+        /* background-color: rgb(51 93 255 / 10%);*/
+        color: #777;
+      }
+
+      .highlight {
+        background-color: #ffff0024;
+      }
+
+      input {
+        padding: 9.5px 15px;
+        border-radius: 4px;
+        border: 1px solid #0076ff;
+        font-size: 1em;
+        background-color: #f9f9f9;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin: 0 10px;
+        max-width: 300px;
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-5px);
+        }
+        60% {
+          transform: translateY(-2px);
+        }
+      }
+
+      .drag-message {
+        display: none;
+        margin-top: 22px;
+        font-size: 0.6rem;
+        color: #666;
+        text-align: left;
+      }
+
+      @media (max-width: 550px) {
+        .drag-message {
+          display: block;
+          animation: bounce 2s infinite;
+        }
+      }
+
+      .tips {
+        border-radius: 4px;
+        background-color: rgb(51 93 255 / 10%);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 3px;
+        margin-inline: 5px;
+        color: #ff000091;
+      }
+
+      table {
+        /*border-collapse: collapse;*/
+        border-collapse: separate;
+        border-style: hidden;
+        width: 100%;
+      }
+
+      th {
+        border-radius: 6px;
+        border: 1px solid #e4e4e4;
+        text-align: center;
+        vertical-align: middle;
+        color: #797979;
+      }
+
+      th:first-child {
+        border: none;
+      }
+
+      td {
+        border-radius: 6px;
+        border: 1px solid #e4e4e4;
+        height: 58px;
+        text-align: center;
+        color: white;
+        vertical-align: middle;
+      }
+
+      .detail {
+        font-size: 5pt;
+      }
+
+      /* td:first-child {
+        font-weight: 400;
+        font-size: 8pt;
+      } */
+
+      @media (max-width: 550px) {
+        table {
+          font-size: 10pt;
+        }
+      }
+
+      @media (min-width: 800px) {
+        /* PC 화면 패치 */
+        .modal-title div {
+          font-size: 20pt !important;
+        }
+
+        .modal-desc {
+          font-size: 12pt !important;
+        }
+
+        td {
+          height: 90px;
+        }
+
+        .detail {
+          font-size: 10pt;
+        }
+      }
+
+      .cell.selected {
+        background-color: #0076ff;
+      }
+
+      .course-list {
+        border-top: 3px solid #0076ff;
+        border-radius: 6px 6px 0 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.85);
+        position: fixed;
+        bottom: 60px;
+        left: 0;
+        transform: translateY(100%);
+        transition: transform 0.5s ease;
+        z-index: 10;
+        box-shadow: 0 0 32px rgba(0, 0, 0, 0.2);
+      }
+
+      .course-list.show {
+        transform: translateY(0);
+      }
+
+      .course-item {
+        padding: 15px;
+        cursor: pointer;
+        transition:
+          background-color 0.2s,
+          transform 0.2s;
+        border-radius: 6px;
+        margin: 10px;
+        border: 1px solid #e0e0e0;
+      }
+
+      .course-item:hover {
+        background-color: #e0f0ff;
+        transform: scale(1.02);
+      }
+
+      .second-line {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .course-name {
+        color: black;
+        font-size: 1.1em;
+        line-height: 1.5;
+      }
+
+      .course-num {
+        border-radius: 4px;
+        background-color: rgb(51 93 255 / 10%);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        font-size: 0.6em;
+        padding: 3px;
+        margin-right: 3px;
+        margin-block: 3px;
+        color: #001dff80;
+        line-height: 1.5em;
+      }
+
+      .course-depart {
+        border-radius: 4px;
+        background-color: rgb(51 93 255 / 10%);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        font-size: 0.6em;
+        padding: 3px;
+        margin-right: 3px;
+        margin-block: 3px;
+        color: #7c00ff80;
+        line-height: 1.5em;
+      }
+
+      .course-time,
+      .course-credit,
+      .course-grade,
+      .course-professor {
+        border-radius: 4px;
+        background-color: rgb(51 93 255 / 10%);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        font-size: 0.6em;
+        padding: 3px;
+        margin-right: 3px;
+        margin-block: 3px;
+        color: #555;
+        line-height: 1.5em;
+      }
+
+      .course-notice {
+        border-radius: 4px;
+        background-color: rgb(51 93 255 / 10%);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        font-size: 0.6em;
+        padding: 3px;
+        margin-right: 3px;
+        margin-block: 3px;
+        color: #ff7474;
+        line-height: 1.5em;
+      }
+
+      .toggle-button {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background-color: #0076ff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        z-index: 20;
+      }
+
+      .toggle-button:hover {
+        background-color: #0076ff;
+      }
+
+      .department-select {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-start;
+        overflow-x: auto;
+        padding: 20px;
+      }
+
+      @media (max-width: 550px) {
+        .department-select {
+          justify-content: space-between;
+        }
+      }
+
+      .department-select > div {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .option,
+      .search {
+        color: #666;
+        font-size: 0.9em;
+        margin-bottom: 5px;
+      }
+
+      #departmentSelect {
+        padding: 10px 15px;
+        border-radius: 4px;
+        border: 1px solid #0076ff;
+        font-size: 1em;
+        background-color: #f9f9f9;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin: 0 10px;
+      }
+
+      #departmentSelect:hover {
+        border-color: #005bb5;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+        opacity: 0;
+        transform: scale(1.1);
+        transition:
+          opacity 0.5s ease,
+          transform 0.5s ease;
+      }
+
+      .modal.show {
+        display: block;
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .modal-content {
+        background-color: #fefefe;
+        font-size: 10pt;
+        font-weight: 500;
+        margin: 50pt auto;
+        padding: 20px;
+        border-top: 3px solid #0076ff;
+        border-radius: 6px;
+        width: 80%;
+        max-width: 500px;
+      }
+
+      .modal-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      p {
+        word-break: keep-all;
+      }
+
+      .modal-title div {
+        font-weight: bold;
+        font-size: 17pt;
+        text-align: center;
+        flex-grow: 1;
+      }
+
+      .modal-desc {
+        padding-block: 40px;
+      }
+
+      .close-button {
+        color: #0076ff;
+        float: right;
+        font-size: 28px;
+        cursor: pointer;
+      }
+
+      .close-button:hover,
+      .close-button:focus {
+        color: #005bb5;
+      }
+
+      .timetable-container {
+        position: relative;
+        padding-inline: 10px;
+        margin-bottom: 90px;
+      }
+
+      #creditMessage {
+        text-align: center;
+        font-size: 16px;
+        margin: 10px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border: 1px solid #0076ff;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+
+      #downloadImageButton {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        aspect-ratio: 1;
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: #0076ff;
+        color: white;
+        border: none;
+        /* font-size: 14px; */
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition:
+          background-color 0.3s,
+          transform 0.3s;
+        z-index: 1;
+        width: 28px;
+      }
+
+      #downloadImageButton:hover {
+        background-color: #005bb5;
+      }
+
+      #shareButton {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        aspect-ratio: 1;
+        position: absolute;
+        right: 48px;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: #0076ff;
+        color: white;
+        border: none;
+        /* font-size: 14px; */
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition:
+          background-color 0.3s,
+          transform 0.3s;
+        z-index: 1;
+        width: 28px;
+      }
+
+      #shareButton:hover {
+        background-color: #005bb5;
+      }
+
+      #detailButton {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        aspect-ratio: 1;
+        position: absolute;
+        right: 86px;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: #0076ff;
+        color: white;
+        border: none;
+        /* font-size: 14px; */
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition:
+          background-color 0.3s,
+          transform 0.3s;
+        z-index: 1;
+        width: 28px;
+      }
+
+      #detailButton:hover {
+        background-color: #005bb5;
+      }
+
+      .course-items {
+        max-height: 360px;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+
+      .course-items::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .course-items::-webkit-scrollbar-thumb {
+        background-color: #007bff;
+        border-radius: 4px;
+      }
+
+      .course-items::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      #creditValue {
+        color: #0076ff;
+        border-radius: 4px;
+        background-color: rgb(51 93 255 / 10%);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 3px;
+        margin-inline: 2px;
+      }
+    </style>
+
+    <style>
+      #menuButton {
+        position: absolute;
+        left: 10px; /* 오른쪽에 위치 */
+        top: 50%; /* 수직 중앙 정렬 */
+        transform: translateY(-50%); /* 수직 중앙 조정 */
+        /*background-color: #0076ff;*/
+        color: white;
+        border: none;
+        font-size: 14px;
+        /*border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);*/
+        transition:
+          background-color 0.3s,
+          transform 0.3s;
+        cursor: pointer;
+      }
+
+      .menu {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 250px;
+        height: 100%;
+        background-color: #fff;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+        transition: left 0.5s ease;
+        z-index: 30;
+        padding-inline: 20px;
+        overflow-y: auto;
+        border-right: 3px solid #0076ff;
+        border-radius: 0px 6px 6px 0;
+      }
+
+      .menu.show {
+        left: 0;
+      }
+
+      .menu h2 {
+        margin: 0;
+        font-size: 24px;
+        color: #0076ff;
+        text-align: center;
+        margin: 20px;
+      }
+
+      .menu ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .menu li {
+        margin: 10px 0;
+      }
+
+      .menu a {
+        display: block;
+        padding: 10px;
+        color: #333;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+        border-radius: 3px;
+        border-bottom: 1px solid #77777754;
+      }
+
+      .menu a:hover {
+        background-color: #f0f8ff;
+        color: #0076ff;
+      }
+
+      select {
+        /* iOS 대응 */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+
+        background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22currentColor%22%20class%3D%22bi%20bi-caret-down-fill%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M7.247%2011.14%202.451%205.658C1.885%205.013%202.345%204%203.204%204h9.592a1%201%200%200%201%20.753%201.659l-4.796%205.48a1%201%200%200%201-1.506%200z%22%2F%3E%3C%2Fsvg%3E")
+          no-repeat right 10px center;
+        background-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="creditMessage">
+      <img
+        id="menuButton"
+        src="https://cdn-icons-png.flaticon.com/512/7710/7710488.png"
+        width="16"
+        height="16"
+        alt=""
+      />
+      <span id="creditValue">0</span
+      ><span style="font-size: 9pt">학점을 담았어요!</span>
+      <button id="downloadImageButton">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="currentColor"
+          class="bi bi-download"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
+          />
+          <path
+            d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"
+          />
+        </svg>
+      </button>
+      <button id="shareButton">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="currentColor"
+          class="bi bi-share"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5m-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3"
+          />
+        </svg>
+      </button>
+      <!--<button id="detailButton">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+          <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+          <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+        </svg>
+      </button>-->
+    </div>
+    <div class="menu" id="menu">
+      <h2>SYU KR</h2>
+      <ul>
+        <li><a href="https://www.syu.kr">홈</a></li>
+        <li><a href="/timetable">시간표 마법사</a></li>
+        <li><a href="/liberalarts">공통(교양) 과목 검색</a></li>
+        <li><a href="/search">학부(과) 과목 검색</a></li>
+        <li><a href="/competitionRate">과목 장바구니 경쟁률</a></li>
+        <li><a href="/history">실험실?</a></li>
+      </ul>
+      <div
+        style="
+          margin-top: 30px;
+          text-align: center;
+          font-size: 8pt;
+          color: #777;
+        "
+      >
+        <div>
+          (C) 2025 <span style="color: #0076ff">SYU KR</span>. (KIM SANG YUN)
+        </div>
+        <div>SINCE 2023, more powerful and simpler.</div>
+      </div>
+    </div>
+    <div class="course-list" id="courseList">
+      <div class="department-select">
+        <div>
+          <span class="option">학부(과)</span>
+          <select id="departmentSelect">
+            <option value="">ALL</option>
+          </select>
+          <div class="drag-message">
+            <span class="tips">TIPS</span>옆으로 드래그하여 옵션을 확인해보세요!
+          </div>
+        </div>
+        <div>
+          <span class="search">검색</span>
+          <input
+            type="text"
+            id="searchText"
+            placeholder="찾을 검색어를 입력하세요..."
+            onkeydown="keyEnter()"
+          />
+          <div style="block: inline-block; margin-top: 15px">
+            <!--<button id="searchButton" class="searchStyle" onclick="searchText()">검색</button>-->
+            <button
+              id="prevButton"
+              class="searchStyle"
+              onclick="navigate('prev')"
+            >
+              ◀ 이전
+            </button>
+            <span id="statusText">0/0</span>
+            <button
+              id="nextButton"
+              class="searchStyle"
+              onclick="navigate('next')"
+            >
+              다음 ▶
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="toggle-button" id="toggleButton">목록</button>
+    <div class="timetable-container">
+      <table id="timetable">
+        <thead>
+          <tr>
+            <th style="width: 10px"></th>
+            <th style="width: 20%">월</th>
+            <th style="width: 20%">화</th>
+            <th style="width: 20%">수</th>
+            <th style="width: 20%">목</th>
+            <th style="width: 20%">금</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: #797979">1</td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+          </tr>
+          <tr>
+            <td style="color: #797979">2</td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+          </tr>
+          <tr>
+            <td style="color: #797979">3</td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+          </tr>
+          <tr>
+            <td style="color: #797979">4</td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+          </tr>
+          <tr>
+            <td style="color: #797979">5</td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+          </tr>
+          <tr>
+            <td style="color: #797979">6</td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+          </tr>
+          <tr>
+            <td style="color: #797979">7</td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+          </tr>
+          <tr style="display: none">
+            <td style="color: #797979">8</td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+          </tr>
+          <tr style="display: none">
+            <td style="color: #797979">9</td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+          </tr>
+          <tr style="display: none">
+            <td style="color: #797979">10</td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+          </tr>
+          <tr style="display: none">
+            <td style="color: #797979">11</td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+          </tr>
+          <tr style="display: none">
+            <td style="color: #797979">12</td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+          </tr>
+          <tr style="display: none">
+            <td style="color: #797979">13</td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+          </tr>
+          <tr style="display: none">
+            <td style="color: #797979">14</td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+          </tr>
+          <tr style="display: none">
+            <td style="color: #797979">15</td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+          </tr>
+          <tr style="display: none">
+            <td style="color: #797979">16</td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="drag-message" style="margin-top: 12px; text-align: right">
+        <span class="tips">TIPS</span>시간표에 넣어둔 과목을 누르면 자동으로
+        삭제돼요.
+      </div>
+    </div>
+    <div id="welcomeModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-title">
+          <div style="font-weight: bold; font-size: 17pt">알려드려요!</div>
+          <span class="close-button">&times;</span>
+        </div>
+        <div class="modal-desc">
+          <p style="color: red">
+            ※
+            <strong
+              style="
+                padding: 2px;
+                border-radius: 4px;
+                background-color: rgb(255 51 51 / 10%);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              "
+              >2025.01.25.(토)</strong
+            >
+            기준으로 업데이트된 강의들을 읽어오고 있어요!
+          </p>
+          <!--<p style="color: red;">※ <strong style="padding: 2px; border-radius: 4px; background-color: rgb(255 51 51 / 10%); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">학교 사정</strong> 에 따라 강의 시간이나 교수가 갑작스럽게 변경될 수 있어요!</p>-->
+          <hr />
+          <p>
+            시간표를 다 만들고 <strong>[공유하기]</strong> 또는
+            <strong>[다운로드]</strong> 아이콘을 눌러 시간표를 공유하거나
+            사진으로 다운받을 수 있어요.
+          </p>
+          <p>
+            검색 도구를 이용해
+            <strong>강좌명, 강좌번호, 학점, 수업시간</strong> 등 자유롭게 검색할
+            수 있어요.
+          </p>
+        </div>
+      </div>
+    </div>
+    <script>
+      window.onload = () => {
+        const modal = document.getElementById("welcomeModal");
+        const closeButton = document.querySelector(".close-button");
+
+        modal.style.display = "block";
+        setTimeout(() => {
+          modal.classList.add("show");
+        }, 10);
+
+        closeButton.onclick = () => {
+          modal.classList.remove("show");
+          setTimeout(() => {
+            modal.style.display = "none";
+          }, 500);
+        };
+
+        window.onclick = (event) => {
+          if (event.target === modal) {
+            modal.classList.remove("show");
+            setTimeout(() => {
+              modal.style.display = "none";
+            }, 500);
+          }
+        };
+      };
+    </script>
+
+    <script>
+      const courses = [];
+      const courseList = document.getElementById("courseList");
+      const toggleButton = document.getElementById("toggleButton");
+      const departmentSelect = document.getElementById("departmentSelect");
+
+      function createCourseList() {
+        const departments = {};
+        courses.forEach((course) => {
+          if (!departments[course["학부(과)"]]) {
+            departments[course["학부(과)"]] = [];
+          }
+          departments[course["학부(과)"]].push(course);
+        });
+
+        for (const department in departments) {
+          const option = document.createElement("option");
+          option.value = department;
+          option.textContent = department;
+          departmentSelect.appendChild(option);
+        }
+        updateCourseList(courses);
+      }
+
+      function updateCourseList(filteredCourses) {
+        // 학년 오름차순, 학년이 같으면 과목명 오름차순으로 정렬
+        filteredCourses.sort((a, b) => {
+          if (a.학년 === b.학년) {
+            return a.과목명.localeCompare(b.과목명);
+          }
+          return a.학년 - b.학년;
+        });
+
+        const departmentDiv = courseList.querySelector(".department-select");
+        const courseItems = document.createElement("div");
+        courseItems.className = "course-items";
+        courseList.innerHTML = "";
+        // courseList.appendChild(departmentDiv);
+
+        filteredCourses.forEach((course) => {
+          const div = document.createElement("div");
+          div.className = "course-item";
+          const firstLine = document.createElement("div");
+          firstLine.className = "first-line";
+          const secondLine = document.createElement("div");
+          secondLine.className = "second-line";
+
+          const courseName = document.createElement("span");
+          courseName.className = "course-name";
+          courseName.textContent = course.과목명;
+
+          const courseNum = document.createElement("span");
+          courseNum.className = "course-num";
+          courseNum.textContent = `강좌번호: ${course.강좌번호}`;
+
+          const courseDepartment = document.createElement("span");
+          courseDepartment.className = "course-depart";
+          courseDepartment.textContent = `${course["학부(과)"]}`;
+
+          const courseGrade = document.createElement("span");
+          courseGrade.className = "course-grade";
+          courseGrade.textContent = `${course.학년}학년`;
+
+          const courseTime = document.createElement("span");
+          courseTime.className = "course-time";
+          courseTime.textContent = course.수업시간 || "?";
+
+          const courseCredit = document.createElement("span");
+          courseCredit.className = "course-credit";
+          courseCredit.textContent = `${course.학점}학점` || "?";
+
+          const courseProfessor = document.createElement("span");
+          courseProfessor.className = "course-professor";
+          courseProfessor.textContent = course.교수명 || "?";
+
+          const courseNotice = document.createElement("span");
+          courseNotice.className = "course-notice";
+          courseNotice.textContent = course.비고;
+
+          firstLine.appendChild(courseName);
+
+          secondLine.appendChild(courseNum);
+          secondLine.appendChild(courseDepartment);
+          secondLine.appendChild(courseGrade);
+          secondLine.appendChild(courseTime);
+          secondLine.appendChild(courseCredit);
+          secondLine.appendChild(courseProfessor);
+          if (course.비고) secondLine.appendChild(courseNotice);
+
+          div.appendChild(firstLine);
+          div.appendChild(secondLine);
+
+          div.style.color = course.color;
+          div.onclick = () => highlightClass(course);
+          courseItems.appendChild(div);
+        });
+
+        courseList.innerHTML = "";
+        courseList.appendChild(departmentDiv);
+        courseList.appendChild(courseItems);
+      }
+
+      toggleButton.onclick = () => {
+        const isVisible = courseList.classList.contains("show");
+        courseList.classList.toggle("show", !isVisible);
+        toggleButton.textContent = isVisible ? "목록" : "숨기기";
+
+        const downloadButton = document.getElementById("downloadImageButton");
+        downloadButton.style.display = isVisible ? "flex" : "none";
+
+        const shareButton = document.getElementById("shareButton");
+        shareButton.style.display = isVisible ? "flex" : "none";
+
+        /* const detailButton = document.getElementById("detailButton");
+        detailButton.style.display = isVisible ? "flex" : "none"; */
+      };
+      const cells = document.querySelectorAll(".cell");
+      const timetableCells = {};
+      const days = ["월", "화", "수", "목", "금"];
+      const times = [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+      ];
+
+      cells.forEach((cell) => {
+        const row = cell.parentElement;
+        const timeIndex = Array.from(row.children).indexOf(cell);
+        const day = days[timeIndex - 1];
+        const time = times[Array.from(row.parentElement.children).indexOf(row)];
+        timetableCells[`${day}${time}`] = cell;
+      });
+
+      function getRandomColor() {
+        const r = Math.floor(Math.random() * 106) + 150; // 150 ~ 255
+        const g = Math.floor(Math.random() * 106) + 150; // 150 ~ 255
+        const b = Math.floor(Math.random() * 106) + 150; // 150 ~ 255
+
+        return `rgb(${r}, ${g}, ${b})`;
+      }
+
+      /* function getRandomColor() {
+        let color;
+        do {
+          const letters = "0123456789ABCDEF";
+          color = "#" + Array.from({ length: 6 }, () => letters[Math.floor(Math.random() * 16)]).join("");
+        } while (isLightColor(color)); // 밝은 색상이면 다시 생성
+
+        return color;
+      }
+
+      function isLightColor(hex) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        const brightness = (r * 299 + g * 587 + b * 114) / 255000; // 밝기 계산
+        return brightness > 0.5; // 밝은 색상인지 여부
+      } */
+
+      function addRandomColors() {
+        courses.forEach((course) => {
+          course.color = getRandomColor();
+        });
+      }
+
+      let totalCredits = 0;
+
+      let selectedClasses = [];
+
+      cells.forEach((cell) => {
+        cell.onclick = () => {
+          const courseId = cell.dataset.courseId;
+
+          if (courseId) {
+            const courseToRemove = courses.find(
+              (course) => course.강좌번호 === courseId,
+            );
+
+            if (courseToRemove) {
+              selectedClasses = selectedClasses.filter(
+                (course) => course.강좌번호 !== courseId,
+              ); // 2024.12.21
+              totalCredits -= parseInt(courseToRemove.학점, 10);
+              document.getElementById("creditValue").textContent =
+                `${totalCredits}`;
+            }
+
+            cells.forEach((innerCell) => {
+              if (innerCell.dataset.courseId === courseId) {
+                // 2024.12.22 (cell 병합)
+
+                const timeSlots = courseToRemove.수업시간.split(",");
+                timeSlots.forEach((slot) => {
+                  const day = slot.charAt(0);
+                  const timeRange = slot.slice(1);
+                  if (timeRange.includes("~")) {
+                    const [startTime, endTime] = timeRange
+                      .split("~")
+                      .map(Number);
+                    for (let i = startTime + 1; i <= endTime; i++) {
+                      const cellKey = `${day}${i}`;
+                      const cell = timetableCells[cellKey];
+
+                      if (cell) {
+                        cell.style.display = "table-cell";
+                      }
+                    }
+                  }
+                });
+
+                innerCell.removeAttribute("data-course-id");
+                innerCell.removeAttribute("style");
+                innerCell.removeAttribute("rowspan");
+                innerCell.textContent = "";
+              }
+            });
+
+            for (let i = 16; i >= 8; i--) {
+              const row = document.querySelector(`tr:nth-child(${i})`);
+              if (row) {
+                // 첫 번째 td를 제외한 나머지 td 확인
+                const isEmpty = Array.from(row.children)
+                  .slice(1)
+                  .every((td) => !td.textContent.trim());
+
+                // 2024.12.22 (cell )
+                const isRowspan = Array.from(row.children).some(
+                  (td) => td.style.display === "none",
+                );
+
+                if (isRowspan) {
+                  break;
+                }
+
+                if (!isEmpty) {
+                  break;
+                }
+
+                row.style.display = "none";
+              }
+            }
+          }
+        };
+        /* cell.onclick = () => {
+          const currentColor = cell.style.backgroundColor;
+          const currentCourseName = cell.textContent;
+
+          if (currentColor && currentCourseName) {
+            const courseToRemove = courses.find((course) => course.과목명 === currentCourseName);
+            if (courseToRemove) {
+              totalCredits -= parseInt(courseToRemove.학점, 10);
+              console.log('ㅎㅇ')
+              document.getElementById("creditValue").textContent = `${totalCredits}`;
+            }
+
+            cells.forEach((innerCell) => {
+              if (innerCell.style.backgroundColor === currentColor && innerCell.textContent === currentCourseName) {
+                innerCell.style.backgroundColor = "";
+                innerCell.textContent = "";
+              }
+            });
+            
+            for (let i = 16; i >= 8; i--) {
+              const row = document.querySelector(`tr:nth-child(${i})`);
+              if (row) {
+                // 첫 번째 td를 제외한 나머지 td 확인
+                const isEmpty = Array.from(row.children).slice(1).every(td => !td.textContent.trim());
+                
+                if (!isEmpty) {
+                  break;
+                }
+                
+                row.style.display = "none";
+              }
+            }
+          }
+        }; */
+      });
+
+      function updateTimetable() {
+        const cells = document.querySelectorAll(".cell");
+        let maxClass = 0;
+
+        // 선택된 클래스의 최대 교시 계산
+        selectedClasses.forEach((course) => {
+          const timeSlots = course.수업시간.split(",");
+          timeSlots.forEach((slot) => {
+            const day = slot.charAt(0);
+            if (day === "일") return;
+            const timeRange = slot.slice(1);
+            if (timeRange.includes("~")) {
+              const [startTime, endTime] = timeRange.split("~").map(Number);
+              maxClass = Math.max(maxClass, endTime);
+            } else {
+              maxClass = Math.max(maxClass, Number(timeRange));
+            }
+          });
+        });
+
+        // 10교시 이상일 경우 테이블의 행 표시
+        const rows = document.querySelectorAll("#timetable tbody tr");
+        rows.forEach((row, index) => {
+          if (index >= maxClass) {
+            // row.style.display = "none";
+          } else {
+            row.style.display = "table-row";
+          }
+        });
+      }
+
+      function highlightClass(course) {
+        selectedClasses.push(course); // 과목 추가
+        updateTimetable(); // 시간표 업데이트
+
+        const timeSlots = course.수업시간.split(",");
+
+        if (
+          timeSlots.length === 0 ||
+          timeSlots[0] === "" ||
+          timeSlots.some((slot) => slot.startsWith("일"))
+        ) {
+          const rows = document.querySelectorAll("#timetable tbody tr");
+          // const alreadyExists = Array.from(existingRows).some(existingRow => existingRow.textContent.includes(course.과목명));
+          const alreadyExists = [...rows].some((row) =>
+            [...row.querySelectorAll("td")].some(
+              (td) =>
+                td.dataset.courseId &&
+                td.dataset.courseId.includes(course.강좌번호),
+            ),
+          ); // 2024.12.21
+
+          if (alreadyExists) {
+            alert("이미 선택한 과목이에요!");
+            selectedClasses.pop(); // 2024.12.21
+            /* selectedClasses = selectedClasses.reduce((total, current) => 
+                                                     total.some(c => c.강좌번호 === current.강좌번호)
+                                                     ? total : [...total, current], []); // 2024.12.21 */
+            return;
+          }
+
+          const row = document.createElement("tr");
+          const cell = document.createElement("td");
+          cell.colSpan = 6;
+          cell.setAttribute("data-course-id", course.강좌번호); // 2024.12.21
+          cell.style.backgroundColor =
+            cell.style.backgroundColor === course.color ? "" : course.color;
+          cell.textContent = `${course.과목명} (${course.교수명})`;
+          row.appendChild(cell);
+          document.querySelector("#timetable tbody").appendChild(row);
+
+          row.onclick = () => {
+            row.remove();
+            selectedClasses = selectedClasses.filter(
+              (c) => c.강좌번호 !== course.강좌번호,
+            ); // 2024.12.21
+            totalCredits -= parseInt(course.학점, 10);
+            document.getElementById("creditValue").textContent =
+              `${totalCredits}`;
+          };
+
+          totalCredits += parseInt(course.학점, 10);
+          document.getElementById("creditValue").textContent =
+            `${totalCredits}`;
+          return;
+        }
+
+        let conflict = false;
+        timeSlots.forEach((slot) => {
+          const day = slot.charAt(0);
+          const timeRange = slot.slice(1);
+          if (timeRange.includes("~")) {
+            const [startTime, endTime] = timeRange.split("~").map(Number);
+            for (let i = startTime; i <= endTime; i++) {
+              const cellKey = `${day}${i}`;
+              const cell = timetableCells[cellKey];
+              // 2024.12.22 (cell 병합)
+              if (cell.style.display === "none" || cell.style.backgroundColor) {
+                // if (cell.style.backgroundColor) {
+                conflict = true;
+              }
+            }
+          } else {
+            const cellKey = `${day}${timeRange}`;
+            const cell = timetableCells[cellKey];
+            // 2024.12.22 (cell 병합)
+            if (cell.style.display === "none" || cell.style.backgroundColor) {
+              //if (cell && cell.style.backgroundColor) {
+              conflict = true;
+            }
+          }
+        });
+
+        if (conflict) {
+          alert(
+            `[${course.과목명}] 과목은 다른 과목이랑 시간이 겹쳐요!\n\n아쉽게 [${course.수업시간}] 에 추가할 수 없어요!`,
+          );
+          selectedClasses.pop(); // 2024.12.21
+          /* selectedClasses = selectedClasses.reduce((total, current) => 
+                                                     total.some(c => c.강좌번호 === current.강좌번호)
+                                                     ? total : [...total, current], []); // 2024.12.21*/
+          return;
+        }
+
+        // 2024.12.22 (cell 병합)
+
+        timeSlots.forEach((slot) => {
+          const day = slot.charAt(0);
+          const timeRange = slot.slice(1);
+
+          if (timeRange.includes("~")) {
+            const [startTime, endTime] = timeRange.split("~").map(Number);
+
+            const firstCellKey = `${day}${startTime}`;
+            const firstCell = timetableCells[firstCellKey];
+
+            if (firstCell) {
+              firstCell.setAttribute("data-course-id", course.강좌번호);
+              firstCell.style.backgroundColor = course.color;
+              firstCell.innerHTML = `${course.과목명} <div class="detail">(${course.강좌번호}) (${course.교수명})</div>`;
+
+              firstCell.setAttribute("rowspan", endTime - startTime + 1);
+            }
+
+            // 2024.12.22 (cell 병합)
+            for (let i = startTime + 1; i <= endTime; i++) {
+              const cellKey = `${day}${i}`;
+              const cell = timetableCells[cellKey];
+
+              if (cell) {
+                cell.style.display = "none";
+              }
+            }
+          } else {
+            const cellKey = `${day}${timeRange}`;
+            const cell = timetableCells[cellKey];
+            if (cell) {
+              cell.setAttribute("data-course-id", course.강좌번호); // 2024.12.21
+              cell.style.backgroundColor =
+                cell.style.backgroundColor === course.color ? "" : course.color;
+              cell.innerHTML = `${course.과목명} <div class="detail">(${course.강좌번호}) (${course.교수명})</div>`;
+            }
+          }
+        });
+
+        /* timeSlots.forEach((slot) => {
+          const day = slot.charAt(0);
+          const timeRange = slot.slice(1);
+          if (timeRange.includes("~")) {
+            const [startTime, endTime] = timeRange.split("~").map(Number);
+            for (let i = startTime; i <= endTime; i++) {
+              const cellKey = `${day}${i}`;
+              const cell = timetableCells[cellKey];
+              if (cell) {
+                cell.setAttribute('data-course-id', course.강좌번호); // 2024.12.21
+                cell.style.backgroundColor = cell.style.backgroundColor === course.color ? "" : course.color;
+                cell.innerHTML = cell.style.backgroundColor ? `${course.과목명} <div style="font-size: 5pt;">(${course.강좌번호}) (${course.교수명})</div>` : "";
+              }
+            }
+          } else {
+            const cellKey = `${day}${timeRange}`;
+            const cell = timetableCells[cellKey];
+            if (cell) {
+              cell.setAttribute('data-course-id', course.강좌번호); // 2024.12.21
+              cell.style.backgroundColor = cell.style.backgroundColor === course.color ? "" : course.color;
+              cell.innerHTML = cell.style.backgroundColor ? `${course.과목명} <div style="font-size: 5pt;">(${course.강좌번호}) (${course.교수명})</div>` : "";
+            }
+          }
+        }); */
+
+        totalCredits += parseInt(course.학점, 10);
+        document.getElementById("creditValue").textContent = `${totalCredits}`;
+      }
+
+      departmentSelect.onchange = () => {
+        const selectedDepartment = departmentSelect.value;
+        const filteredCourses = selectedDepartment
+          ? courses.filter(
+              (course) => course["학부(과)"] === selectedDepartment,
+            )
+          : courses;
+        updateCourseList(filteredCourses);
+      };
+
+      fetch("https://api.syu.kr/v1/lecture/timetable")
+        .then((response) => response.json())
+        .then((data) => {
+          courses.push(...data.api.api);
+          addRandomColors();
+          createCourseList();
+        });
+    </script>
+
+    <script>
+      document.getElementById("downloadImageButton").onclick = () => {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+
+        const timetable = document.getElementById("timetable");
+        const rows = Array.from(timetable.rows).filter((row) => {
+          const computedStyle = window.getComputedStyle(row);
+          return computedStyle.display !== "none";
+        });
+
+        const rowHeight = 50;
+        const firstRowHeight = 25;
+        const defaultColumnWidth = 100;
+        const firstColumnWidth = 25;
+
+        // 디스플레이 해상도에 맞게 캔버스 크기 조정
+        const scale = window.devicePixelRatio || 1;
+        canvas.width =
+          (firstColumnWidth + defaultColumnWidth * (rows[0].cells.length - 1)) *
+          scale;
+        canvas.height =
+          rows.reduce((totalHeight, row, index) => {
+            return totalHeight + (index === 0 ? firstRowHeight : rowHeight); // 첫 번째 행은 firstRowHeight, 나머지는 rowHeight
+          }, 0) * scale;
+
+        // 스타일 크기는 그대로 유지
+        canvas.style.width = `${firstColumnWidth + defaultColumnWidth * (rows[0].cells.length - 1)}px`;
+        canvas.style.height = `${rows.reduce((totalHeight, row, index) => {
+          return totalHeight + (index === 0 ? firstRowHeight : rowHeight); // 첫 번째 행은 firstRowHeight, 나머지는 rowHeight
+        }, 0)}px`;
+
+        context.scale(scale, scale); // 캔버스의 실제 크기 비율을 스케일에 맞게 조정
+
+        context.fillStyle = "#fff";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        context.lineWidth = 1; // 테두리 두께 설정
+
+        // 행을 그리는 부분
+        let currentY = 0; // 각 행의 Y 위치를 저장할 변수
+
+        for (let i = 0; i < rows.length; i++) {
+          const row = rows[i];
+          const cells = row.cells;
+          const currentRowHeight = i === 0 ? firstRowHeight : rowHeight; // 첫 번째 행은 firstRowHeight 사용
+
+          // 각 셀을 그리는 부분
+          let currentX = 0; // 각 셀의 X 위치를 저장할 변수
+          for (let j = 0; j < cells.length; j++) {
+            const cell = cells[j];
+
+            // colspan이 있는 셀 처리
+            if (cell.colSpan > 1) {
+              context.fillStyle = cell.style.backgroundColor || "#fff";
+              context.fillRect(
+                j === 0 ? 0 : firstColumnWidth + (j - 1) * defaultColumnWidth,
+                currentY,
+                cell.colSpan === 1
+                  ? firstColumnWidth
+                  : defaultColumnWidth * cell.colSpan,
+                currentRowHeight,
+              );
+
+              // 셀 테두리 그리기
+              /* context.strokeStyle = "#777";
+              context.strokeRect(
+                j === 0 ? 0 : firstColumnWidth + (j - 1) * defaultColumnWidth, 
+                currentY, 
+                j === 0 ? firstColumnWidth : defaultColumnWidth, 
+                currentRowHeight
+              ); */
+
+              context.fillStyle = "white";
+              context.font = `${cell.style.fontWeight} 12px ${cell.style.fontFamily}`;
+
+              let text = cell.innerHTML;
+              text = text.replace(/<div[^>]*>.*?<\/div>/g, "").trim();
+
+              // 텍스트 가운데 정렬
+              const textWidth = context.measureText(text).width;
+              const x =
+                (firstColumnWidth +
+                  defaultColumnWidth * (cell.colSpan - 1) -
+                  textWidth) /
+                2;
+              const y = currentY + currentRowHeight / 2 + 5;
+
+              context.fillText(
+                text,
+                x +
+                  (j === 0
+                    ? 0
+                    : firstColumnWidth + (j - 1) * defaultColumnWidth),
+                y,
+              );
+              j += cell.colSpan - 1; // colspan만큼 셀 인덱스 증가
+              continue;
+            }
+
+            // rowSpan을 처리
+            if (cell.rowSpan > 1) {
+              for (let k = 0; k < cell.rowSpan; k++) {
+                // 세로로 병합된 셀의 y 좌표를 계산 (k에 따라 증가)
+                const rectY = currentY + k * currentRowHeight;
+                context.fillStyle = cell.style.backgroundColor || "#fff";
+                context.fillRect(
+                  j === 0 ? 0 : firstColumnWidth + (j - 1) * defaultColumnWidth,
+                  rectY,
+                  cell.rowSpan === 1 ? firstColumnWidth : defaultColumnWidth,
+                  currentRowHeight,
+                );
+              }
+
+              // 셀 테두리 그리기
+              context.strokeStyle = "#777";
+              context.strokeRect(
+                j === 0 ? 0 : firstColumnWidth + (j - 1) * defaultColumnWidth,
+                currentY,
+                j === 0 ? firstColumnWidth : defaultColumnWidth,
+                currentRowHeight,
+              );
+
+              context.fillStyle = "white";
+              context.font = `${cell.style.fontWeight} 12px ${cell.style.fontFamily}`;
+
+              // 텍스트 처리 (줄 바꿈 처리)
+              let text = cell.innerHTML;
+              text = text.replace(/<div[^>]*>.*?<\/div>/g, "").trim();
+
+              let lines = [];
+              let currentLine = "";
+
+              for (let char of text) {
+                const testLine = currentLine + char;
+                const testWidth = context.measureText(testLine).width;
+
+                if (
+                  testWidth > (j === 0 ? firstColumnWidth : defaultColumnWidth)
+                ) {
+                  if (currentLine) {
+                    lines.push(currentLine);
+                  }
+                  currentLine = char;
+                } else {
+                  currentLine = testLine;
+                }
+              }
+              lines.push(currentLine);
+
+              const lineHeight = 20;
+              for (let k = 0; k < lines.length; k++) {
+                const line = lines[k];
+                const textWidth = context.measureText(line).width;
+                const x =
+                  j === 0
+                    ? 5
+                    : firstColumnWidth +
+                      (j - 1) * defaultColumnWidth +
+                      (defaultColumnWidth - textWidth) / 2;
+                const y =
+                  currentY +
+                  currentRowHeight / 2 +
+                  lineHeight * (k - (lines.length - 1) / 2) +
+                  5;
+
+                context.fillText(line, x, y);
+              }
+              // j += cell.rowSpan - 1;
+              continue;
+            }
+
+            // 셀 배경 색 설정
+            const computedStyle = window.getComputedStyle(cell);
+            context.fillStyle = computedStyle.backgroundColor || "#fff";
+            context.fillRect(
+              j === 0 ? 0 : firstColumnWidth + (j - 1) * defaultColumnWidth,
+              currentY,
+              j === 0 ? firstColumnWidth : defaultColumnWidth,
+              currentRowHeight,
+            );
+
+            // 셀 테두리 그리기
+            context.strokeStyle = "#777";
+            context.strokeRect(
+              j === 0 ? 0 : firstColumnWidth + (j - 1) * defaultColumnWidth,
+              currentY,
+              j === 0 ? firstColumnWidth : defaultColumnWidth,
+              currentRowHeight,
+            );
+
+            // 텍스트 그리기
+            context.fillStyle = computedStyle.color || "#000";
+            context.font = `${computedStyle.fontWeight} 12px ${computedStyle.fontFamily}`;
+
+            // 텍스트 처리 (줄 바꿈 처리)
+            let text = cell.innerHTML;
+            text = text.replace(/<div[^>]*>.*?<\/div>/g, "").trim();
+            let lines = [];
+            let currentLine = "";
+
+            for (let char of text) {
+              const testLine = currentLine + char;
+              const testWidth = context.measureText(testLine).width;
+
+              if (
+                testWidth > (j === 0 ? firstColumnWidth : defaultColumnWidth)
+              ) {
+                if (currentLine) {
+                  lines.push(currentLine);
+                }
+                currentLine = char;
+              } else {
+                currentLine = testLine;
+              }
+            }
+            lines.push(currentLine);
+
+            const lineHeight = 20;
+            for (let k = 0; k < lines.length; k++) {
+              const line = lines[k];
+              const textWidth = context.measureText(line).width;
+              const x =
+                j === 0
+                  ? 5
+                  : firstColumnWidth +
+                    (j - 1) * defaultColumnWidth +
+                    (defaultColumnWidth - textWidth) / 2;
+              const y =
+                currentY +
+                currentRowHeight / 2 +
+                lineHeight * (k - (lines.length - 1) / 2) +
+                5;
+
+              context.fillText(line, x, y);
+            }
+
+            currentX += j === 0 ? firstColumnWidth : defaultColumnWidth; // 다음 셀의 X 위치
+          }
+
+          // Y 위치 업데이트
+          currentY += currentRowHeight;
+        }
+
+        // 배경 이미지 처리
+        const image = new Image();
+        image.src = "https://www.syu.kr/assets/img/banner.png";
+        image.crossOrigin = "Anonymous";
+
+        image.onload = () => {
+          const canvasMaxWidth = canvas.width;
+          const canvasMaxHeight = canvas.height;
+
+          let imgWidth = image.width;
+          let imgHeight = image.height;
+
+          const widthRatio = canvasMaxWidth / imgWidth;
+          const heightRatio = canvasMaxHeight / imgHeight;
+          const minRatio = Math.min(widthRatio, heightRatio);
+
+          imgWidth *= minRatio;
+          imgHeight *= minRatio;
+
+          const x = (canvas.width - imgWidth) / 2;
+          const y = (canvas.height - imgHeight) / 2;
+
+          context.setTransform(1, 0, 0, 1, 0, 0); // 스케일 초기화
+
+          context.globalAlpha = 0.1;
+          context.drawImage(image, x, y, imgWidth, imgHeight);
+          context.globalAlpha = 1.0;
+
+          const link = document.createElement("a");
+          link.download = "timetable.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        };
+      };
+    </script>
+
+    <script>
+      const menuButton = document.getElementById("menuButton");
+      const menu = document.getElementById("menu");
+
+      menuButton.onclick = () => {
+        const isVisible = menu.classList.contains("show");
+        menu.classList.toggle("show", !isVisible);
+      };
+
+      document.addEventListener("click", (event) => {
+        const isMenuVisible = menu.classList.contains("show");
+        const isClickInsideMenu = menu.contains(event.target);
+        const isClickOnButton = menuButton.contains(event.target);
+
+        // 메뉴가 보일 때 메뉴 외부나 버튼 이외의 곳을 클릭하면 메뉴 닫기
+        if (isMenuVisible && !isClickInsideMenu && !isClickOnButton) {
+          menu.classList.remove("show");
+        }
+      });
+    </script>
+
+    <script>
+      document
+        .getElementById("searchText")
+        .addEventListener("focus", function () {
+          const section = document.getElementById("courseList");
+          section.style.transform = "translateY(72%)";
+        });
+
+      document
+        .getElementById("searchText")
+        .addEventListener("blur", function () {
+          const section = document.getElementById("courseList");
+          section.style.transform = "";
+        });
+
+      function keyEnter() {
+        if (event.key === "Enter") {
+          const section = document.getElementById("courseList");
+          section.style.transform = "";
+          searchText();
+        }
+      }
+
+      let highlightedSections = [];
+      let currentIndex = -1;
+
+      // 검색어를 입력할 때마다 하이라이트 처리
+      function searchText() {
+        const searchTerm = document
+          .getElementById("searchText")
+          .value.toLowerCase();
+        const sections = document.querySelectorAll(".course-item");
+
+        // 이전 하이라이트 초기화
+        sections.forEach((section) => {
+          section.classList.remove("highlight");
+        });
+
+        // 검색어가 없으면 종료
+        if (!searchTerm) return;
+
+        highlightedSections = []; // 새로운 하이라이트 배열 초기화
+        currentIndex = -1; // 인덱스 초기화
+
+        sections.forEach((section, index) => {
+          const text = section.textContent.toLowerCase();
+          if (text.includes(searchTerm)) {
+            section.classList.add("highlight");
+            highlightedSections.push(section); // 하이라이트된 항목을 배열에 저장
+          }
+        });
+
+        // 첫 번째 항목으로 스크롤
+        if (highlightedSections.length > 0) {
+          currentIndex = 0;
+          updateStatus();
+          highlightedSections[currentIndex].scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        } else {
+          document.getElementById("statusText").textContent = "0/0";
+        }
+      }
+
+      // 이전 / 다음 항목으로 이동하는 함수
+      function navigate(direction) {
+        if (highlightedSections.length === 0) return; // 하이라이트된 항목이 없으면 아무 것도 안함
+
+        if (direction === "prev" && currentIndex > 0) {
+          currentIndex--;
+        } else if (
+          direction === "next" &&
+          currentIndex < highlightedSections.length - 1
+        ) {
+          currentIndex++;
+        }
+
+        updateStatus();
+        highlightedSections[currentIndex].scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+
+      function updateStatus() {
+        document.getElementById("statusText").textContent =
+          `${currentIndex + 1}/${highlightedSections.length}`;
+      }
+    </script>
+
+    <script>
+      // 2024.12.21
+
+      function getTimetable() {
+        const params = new URLSearchParams(window.location.search);
+        const timetableParam = params.get("share");
+
+        if (timetableParam) {
+          const decoded = atob(timetableParam);
+          setTimeout(() => {
+            courses.forEach((course) => {
+              if (JSON.parse(decoded).includes(course.강좌번호)) {
+                highlightClass(course);
+              }
+            });
+          }, 500);
+        }
+      }
+
+      getTimetable();
+
+      function encodeJsonToBase64(json) {
+        const jsonString = JSON.stringify(json);
+        return btoa(jsonString);
+      }
+
+      function shareLink(json) {
+        const base64Data = encodeJsonToBase64(json);
+        const url = `https://lecture.syu.kr/timetable?share=${base64Data}`;
+        return url;
+      }
+
+      document.getElementById("shareButton").onclick = () => {
+        navigator.clipboard
+          .writeText(
+            shareLink(selectedClasses.map((course) => course.강좌번호)),
+          )
+          .then(() => {
+            alert("링크를 복사했어요!");
+          })
+          .catch((err) => {
+            console.error("링크 복사에 실패했어요!");
+          });
+      };
+    </script>
+
+    <!--<script>
+      document.getElementById("detailButton").onclick = () => {
+        alert("준비중이에요!");
+      };
+    </script>-->
+  </body>
+</html>
