@@ -806,22 +806,58 @@ departmentSelect.onchange = () => {
   updateCourseList(filteredCourses);
 };
 
-// Share URL handling
-function getTimetable() {
-  const params = new URLSearchParams(window.location.search);
-  const timetableParam = params.get("share");
+// Cookie management
+function getCookie(name) {
+  const cookies = document.cookie.split("; ").reduce((acc, cookie) => {
+    const [key, value] = cookie.split("=");
+    acc[key] = value;
+    return acc;
+  }, {});
+  return cookies[name] || null;
+}
 
-  if (timetableParam) {
-    const decoded = atob(timetableParam);
-    setTimeout(() => {
-      courses.forEach((course) => {
-        if (JSON.parse(decoded).includes(course.강좌번호)) {
-          highlightClass(course);
-        }
-      });
-    }, 500);
+// Load timetable from encoded data
+function loadFromEncoded(encoded) {
+  try {
+    const decoded = atob(encoded);
+    const courseIds = JSON.parse(decoded);
+    courseIds.forEach((id) => {
+      const course = courses.find((c) => c.강좌번호 === id);
+      if (course) highlightClass(course);
+    });
+  } catch (e) {
+    console.error("데이터 로드 실패:", e);
   }
 }
+
+// Get timetable from URL or cookie
+function getTimetable() {
+  const params = new URLSearchParams(window.location.search);
+  const shareParam = params.get("share");
+
+  if (shareParam) {
+    // share url first
+    loadFromEncoded(shareParam);
+  } else {
+    const cookieData = getCookie("data");
+    if (cookieData && cookieData !== "W10%3D") {
+      if (confirm("이전에 저장된 데이터를 불러올까요?")) {
+        loadFromEncoded(cookieData);
+      } else {
+        document.cookie =
+          "data=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      }
+    }
+  }
+}
+
+// Auto-save to cookie on page unload
+window.addEventListener("beforeunload", () => {
+  if (selectedClasses.length > 0) {
+    const encoded = encodeJsonToBase64(selectedClasses.map((c) => c.강좌번호));
+    document.cookie = `data=${encoded}; path=/; max-age=${60 * 60 * 24 * 365}`;
+  }
+});
 
 // Modal
 window.onload = () => {
