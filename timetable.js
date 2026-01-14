@@ -837,12 +837,16 @@ function getTimetable() {
 
   if (shareParam) {
     // share url first
-    loadFromEncoded(shareParam);
+    setTimeout(() => {
+      loadFromEncoded(shareParam);
+    }, 500);
   } else {
     const cookieData = getCookie("data");
     if (cookieData && cookieData !== "W10%3D") {
       if (confirm("이전에 저장된 데이터를 불러올까요?")) {
-        loadFromEncoded(cookieData);
+        setTimeout(() => {
+          loadFromEncoded(cookieData);
+        }, 500);
       } else {
         document.cookie =
           "data=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
