@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <title>삼육대학교 시간표 마법사</title>
     <meta
-      name="ciewport"
+      name="viewport"
       content="user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,width=device-width"
     />
     <meta name="robots" content="index,nofollow" />
@@ -22,7 +22,7 @@
       property="og:image"
       content="https://www.syu.kr/assets/img/banner.png"
     />
-    <meta property="og:url" content="https://www.lecture.com/timetable" />
+    <meta property="og:url" content="https://lecture.syu.kr/timetable" />
     <meta
       property="og:description"
       content="효율적인 학기 계획을 위한 나만의 맞춤형 시간표를 만들어 보세요."
@@ -85,6 +85,40 @@
       gtag("config", "G-8E24NNDK21");
     </script>
     <style>
+      @media (min-width: 1100px) {
+        /* Large */
+        .course-items {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          padding: 0 40px;
+          gap: 5px;
+        }
+
+        .course-item {
+          font-size: 1.2rem;
+        }
+      }
+
+      @media (min-width: 650px) and (max-width: 1099px) {
+        /* Medium */
+        .course-items {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          padding: 0 20px;
+          gap: 5px;
+        }
+
+        .course-item {
+          font-size: 1.1rem;
+        }
+      }
+
+      [data-course-id] {
+        color: #797979;
+        cursor: pointer;
+      }
+    </style>
+    <style>
       html,
       body {
         font-family: "NanumSquare", sans-serif;
@@ -94,6 +128,11 @@
         position: relative;
         background-color: #f0f4ff;
         max-width: 800px;
+
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
       }
 
       button {
@@ -102,10 +141,13 @@
       }
 
       .searchStyle {
+        font-family: "NanumSquare", sans-serif;
+        font-weight: 800;
         border: none;
         border-radius: 4px;
         color: #0076ff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+        display: inline-block;
       }
 
       #searchButton {
@@ -116,11 +158,16 @@
       }
 
       #prevButton,
-      #nextButton,
+      #nextButton {
+        font-size: 0.8rem;
+        color: #777;
+        cursor: pointer;
+      }
+
       #statusText {
         font-size: 0.8rem;
         /* background-color: rgb(51 93 255 / 10%);*/
-        color: #777;
+        color: #cacacaff;
       }
 
       .highlight {
@@ -133,9 +180,7 @@
         border: 1px solid #0076ff;
         font-size: 1em;
         background-color: #f9f9f9;
-        transition:
-          border-color 0.2s,
-          box-shadow 0.2s;
+        transition: border-color 0.2s, box-shadow 0.2s;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         margin: 0 10px;
         max-width: 300px;
@@ -247,18 +292,54 @@
         background-color: #0076ff;
       }
 
-      .course-list {
+      /* .course-list {
         border-top: 3px solid #0076ff;
         border-radius: 6px 6px 0 0;
         width: 100%;
         background: rgba(255, 255, 255, 0.85);
         position: fixed;
-        bottom: 60px;
+        bottom: 0;
         left: 0;
         transform: translateY(100%);
-        transition: transform 0.5s ease;
+        transition: transform 0.2s ease;
         z-index: 10;
         box-shadow: 0 0 32px rgba(0, 0, 0, 0.2);
+        touch-action: none;
+      } */
+
+      .drag-handle {
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: grab;
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0.15),
+          rgba(255, 255, 255, 0)
+        );
+      }
+
+      .drag-handle .bar {
+        width: 40px;
+        height: 4px;
+        background-color: #999;
+        border-radius: 2px;
+      }
+
+      .course-list {
+        border-top: 3px solid #0076ff;
+        border-radius: 6px 6px 0 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        position: fixed;
+        bottom: 0;
+        /* transform: translateY(570px); */
+        left: 0;
+        z-index: 1;
+        box-shadow: 0 0 32px rgba(0, 0, 0, 0.2);
+        touch-action: none;
+        transition: transform 0.2s ease;
       }
 
       .course-list.show {
@@ -268,9 +349,7 @@
       .course-item {
         padding: 15px;
         cursor: pointer;
-        transition:
-          background-color 0.2s,
-          transform 0.2s;
+        transition: background-color 0.2s, transform 0.2s;
         border-radius: 6px;
         margin: 10px;
         border: 1px solid #e0e0e0;
@@ -367,14 +446,14 @@
         justify-content: center;
         align-items: flex-start;
         overflow-x: auto;
-        padding: 20px;
+        padding-block: 10px;
       }
 
-      @media (max-width: 550px) {
+      /* @media (max-width: 550px) {
         .department-select {
           justify-content: space-between;
         }
-      }
+      } */
 
       .department-select > div {
         display: flex;
@@ -395,9 +474,7 @@
         border: 1px solid #0076ff;
         font-size: 1em;
         background-color: #f9f9f9;
-        transition:
-          border-color 0.2s,
-          box-shadow 0.2s;
+        transition: border-color 0.2s, box-shadow 0.2s;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         margin: 0 10px;
       }
@@ -419,9 +496,7 @@
         background-color: rgba(0, 0, 0, 0.4);
         opacity: 0;
         transform: scale(1.1);
-        transition:
-          opacity 0.5s ease,
-          transform 0.5s ease;
+        transition: opacity 0.5s ease, transform 0.5s ease;
       }
 
       .modal.show {
@@ -443,9 +518,9 @@
       }
 
       .modal-title {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        position: relative;
+        text-align: center;
+        padding: 0 40px;
       }
 
       p {
@@ -464,9 +539,12 @@
       }
 
       .close-button {
+        position: absolute;
+        right: 10px;
+        top: 50%;
         color: #0076ff;
-        float: right;
-        font-size: 28px;
+        font-size: 20pt;
+        transform: translateY(-50%);
         cursor: pointer;
       }
 
@@ -508,9 +586,7 @@
         /* font-size: 14px; */
         border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        transition:
-          background-color 0.3s,
-          transform 0.3s;
+        transition: background-color 0.3s, transform 0.3s;
         z-index: 1;
         width: 28px;
       }
@@ -534,9 +610,7 @@
         /* font-size: 14px; */
         border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        transition:
-          background-color 0.3s,
-          transform 0.3s;
+        transition: background-color 0.3s, transform 0.3s;
         z-index: 1;
         width: 28px;
       }
@@ -560,9 +634,7 @@
         /* font-size: 14px; */
         border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        transition:
-          background-color 0.3s,
-          transform 0.3s;
+        transition: background-color 0.3s, transform 0.3s;
         z-index: 1;
         width: 28px;
       }
@@ -613,9 +685,7 @@
         font-size: 14px;
         /*border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);*/
-        transition:
-          background-color 0.3s,
-          transform 0.3s;
+        transition: background-color 0.3s, transform 0.3s;
         cursor: pointer;
       }
 
@@ -680,6 +750,20 @@
         background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22currentColor%22%20class%3D%22bi%20bi-caret-down-fill%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M7.247%2011.14%202.451%205.658C1.885%205.013%202.345%204%203.204%204h9.592a1%201%200%200%201%20.753%201.659l-4.796%205.48a1%201%200%200%201-1.506%200z%22%2F%3E%3C%2Fsvg%3E")
           no-repeat right 10px center;
         background-size: 12px;
+      }
+    </style>
+    <style>
+      @media (max-width: 550px) {
+        /* .option, .search {
+          font-size: 0.4em;
+        }
+        #departmentSelect,
+        input {
+          font-size: 0.5em;
+        } */
+        input {
+          width: 120px;
+        }
       }
     </style>
   </head>
@@ -757,6 +841,9 @@
       </div>
     </div>
     <div class="course-list" id="courseList">
+      <div class="drag-handle">
+        <div class="bar"></div>
+      </div>
       <div class="department-select">
         <div>
           <span class="option">학부(과)</span>
@@ -764,7 +851,8 @@
             <option value="">ALL</option>
           </select>
           <div class="drag-message">
-            <span class="tips">TIPS</span>옆으로 드래그하여 옵션을 확인해보세요!
+            <span class="tips">TIPS</span>자유롭게 시간표를 만들어 공유
+            해보세요!
           </div>
         </div>
         <div>
@@ -772,31 +860,24 @@
           <input
             type="text"
             id="searchText"
-            placeholder="찾을 검색어를 입력하세요..."
+            placeholder=""
             onkeydown="keyEnter()"
           />
           <div style="block: inline-block; margin-top: 15px">
             <!--<button id="searchButton" class="searchStyle" onclick="searchText()">검색</button>-->
-            <button
-              id="prevButton"
-              class="searchStyle"
-              onclick="navigate('prev')"
-            >
+            <div id="prevButton" class="searchStyle" onclick="navigate('prev')">
               ◀ 이전
-            </button>
+            </div>
             <span id="statusText">0/0</span>
-            <button
-              id="nextButton"
-              class="searchStyle"
-              onclick="navigate('next')"
-            >
+            <div id="nextButton" class="searchStyle" onclick="navigate('next')">
               다음 ▶
-            </button>
+            </div>
           </div>
         </div>
       </div>
+      <div class="course-itmes"></div>
     </div>
-    <button class="toggle-button" id="toggleButton">목록</button>
+    <!-- <button class="toggle-button" id="toggleButton">목록</button> -->
     <div class="timetable-container">
       <table id="timetable">
         <thead>
@@ -952,6 +1033,16 @@
           <span class="close-button">&times;</span>
         </div>
         <div class="modal-desc">
+          <img
+            src="./suya_.png"
+            style="
+              width: 150px;
+              height: auto;
+              display: block;
+              margin: 0 auto;
+              padding-bottom: 20px;
+            "
+          />
           <p style="color: red">
             ※
             <strong
@@ -960,17 +1051,36 @@
                 border-radius: 4px;
                 background-color: rgb(255 51 51 / 10%);
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                color: #0076ff;
               "
-              >2025.01.25.(토)</strong
-            >
+              ><span id="time"></span
+            ></strong>
             기준으로 업데이트된 강의들을 읽어오고 있어요!
           </p>
           <!--<p style="color: red;">※ <strong style="padding: 2px; border-radius: 4px; background-color: rgb(255 51 51 / 10%); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">학교 사정</strong> 에 따라 강의 시간이나 교수가 갑작스럽게 변경될 수 있어요!</p>-->
           <hr />
           <p>
-            시간표를 다 만들고 <strong>[공유하기]</strong> 또는
-            <strong>[다운로드]</strong> 아이콘을 눌러 시간표를 공유하거나
-            사진으로 다운받을 수 있어요.
+            시간표를 만들고
+            <strong
+              style="
+                padding: 2px;
+                border-radius: 4px;
+                background-color: rgb(51 93 255 / 10%);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              "
+              >[공유하기]</strong
+            >
+            또는
+            <strong
+              style="
+                padding: 2px;
+                border-radius: 4px;
+                background-color: rgb(51 93 255 / 10%);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              "
+              >[다운로드]</strong
+            >
+            아이콘을 누르면 공유하거나 사진으로 다운받을 수 있어요.
           </p>
           <p>
             검색 도구를 이용해
@@ -1044,8 +1154,7 @@
         const departmentDiv = courseList.querySelector(".department-select");
         const courseItems = document.createElement("div");
         courseItems.className = "course-items";
-        courseList.innerHTML = "";
-        // courseList.appendChild(departmentDiv);
+        courseList.appendChild(departmentDiv);
 
         filteredCourses.forEach((course) => {
           const div = document.createElement("div");
@@ -1105,25 +1214,27 @@
           courseItems.appendChild(div);
         });
 
-        courseList.innerHTML = "";
+        const oldCourseItems = courseList.querySelector(".course-items");
+        if (oldCourseItems) oldCourseItems.remove();
+
         courseList.appendChild(departmentDiv);
         courseList.appendChild(courseItems);
       }
 
-      toggleButton.onclick = () => {
-        const isVisible = courseList.classList.contains("show");
-        courseList.classList.toggle("show", !isVisible);
-        toggleButton.textContent = isVisible ? "목록" : "숨기기";
+      // toggleButton.onclick = () => {
+      //   const isVisible = courseList.classList.contains("show");
+      //   courseList.classList.toggle("show", !isVisible);
+      //   toggleButton.textContent = isVisible ? "목록" : "숨기기";
 
-        const downloadButton = document.getElementById("downloadImageButton");
-        downloadButton.style.display = isVisible ? "flex" : "none";
+      //   const downloadButton = document.getElementById("downloadImageButton");
+      //   downloadButton.style.display = isVisible ? "flex" : "none";
 
-        const shareButton = document.getElementById("shareButton");
-        shareButton.style.display = isVisible ? "flex" : "none";
+      //   const shareButton = document.getElementById("shareButton");
+      //   shareButton.style.display = isVisible ? "flex" : "none";
 
-        /* const detailButton = document.getElementById("detailButton");
-        detailButton.style.display = isVisible ? "flex" : "none"; */
-      };
+      //   /* const detailButton = document.getElementById("detailButton");
+      //   detailButton.style.display = isVisible ? "flex" : "none"; */
+      // };
       const cells = document.querySelectorAll(".cell");
       const timetableCells = {};
       const days = ["월", "화", "수", "목", "금"];
@@ -1155,12 +1266,19 @@
       });
 
       function getRandomColor() {
-        const r = Math.floor(Math.random() * 106) + 150; // 150 ~ 255
-        const g = Math.floor(Math.random() * 106) + 150; // 150 ~ 255
-        const b = Math.floor(Math.random() * 106) + 150; // 150 ~ 255
-
-        return `rgb(${r}, ${g}, ${b})`;
+        const h = Math.floor(Math.random() * 360);
+        const s = 93; // 채도
+        const l = 93; // 밝기
+        return `hsl(${h}, ${s}%, ${l}%)`;
       }
+
+      // function getRandomColor() {
+      //   const r = Math.floor(Math.random() * 106) + 150;  // 150 ~ 255
+      //   const g = Math.floor(Math.random() * 106) + 150;  // 150 ~ 255
+      //   const b = Math.floor(Math.random() * 106) + 150;  // 150 ~ 255
+
+      //   return `rgb(${r}, ${g}, ${b})`;
+      // }
 
       /* function getRandomColor() {
         let color;
@@ -1196,16 +1314,17 @@
 
           if (courseId) {
             const courseToRemove = courses.find(
-              (course) => course.강좌번호 === courseId,
+              (course) => course.강좌번호 === courseId
             );
 
             if (courseToRemove) {
               selectedClasses = selectedClasses.filter(
-                (course) => course.강좌번호 !== courseId,
+                (course) => course.강좌번호 !== courseId
               ); // 2024.12.21
               totalCredits -= parseInt(courseToRemove.학점, 10);
-              document.getElementById("creditValue").textContent =
-                `${totalCredits}`;
+              document.getElementById(
+                "creditValue"
+              ).textContent = `${totalCredits}`;
             }
 
             cells.forEach((innerCell) => {
@@ -1248,7 +1367,7 @@
 
                 // 2024.12.22 (cell )
                 const isRowspan = Array.from(row.children).some(
-                  (td) => td.style.display === "none",
+                  (td) => td.style.display === "none"
                 );
 
                 if (isRowspan) {
@@ -1348,8 +1467,8 @@
             [...row.querySelectorAll("td")].some(
               (td) =>
                 td.dataset.courseId &&
-                td.dataset.courseId.includes(course.강좌번호),
-            ),
+                td.dataset.courseId.includes(course.강좌번호)
+            )
           ); // 2024.12.21
 
           if (alreadyExists) {
@@ -1374,16 +1493,18 @@
           row.onclick = () => {
             row.remove();
             selectedClasses = selectedClasses.filter(
-              (c) => c.강좌번호 !== course.강좌번호,
+              (c) => c.강좌번호 !== course.강좌번호
             ); // 2024.12.21
             totalCredits -= parseInt(course.학점, 10);
-            document.getElementById("creditValue").textContent =
-              `${totalCredits}`;
+            document.getElementById(
+              "creditValue"
+            ).textContent = `${totalCredits}`;
           };
 
           totalCredits += parseInt(course.학점, 10);
-          document.getElementById("creditValue").textContent =
-            `${totalCredits}`;
+          document.getElementById(
+            "creditValue"
+          ).textContent = `${totalCredits}`;
           return;
         }
 
@@ -1415,7 +1536,7 @@
 
         if (conflict) {
           alert(
-            `[${course.과목명}] 과목은 다른 과목이랑 시간이 겹쳐요!\n\n아쉽게 [${course.수업시간}] 에 추가할 수 없어요!`,
+            `[${course.과목명}] 과목은 다른 과목이랑 시간이 겹쳐요!\n\n[${course.수업시간}] 에 추가할 수 없어요!`
           );
           selectedClasses.pop(); // 2024.12.21
           /* selectedClasses = selectedClasses.reduce((total, current) => 
@@ -1498,7 +1619,7 @@
         const selectedDepartment = departmentSelect.value;
         const filteredCourses = selectedDepartment
           ? courses.filter(
-              (course) => course["학부(과)"] === selectedDepartment,
+              (course) => course["학부(과)"] === selectedDepartment
             )
           : courses;
         updateCourseList(filteredCourses);
@@ -1507,6 +1628,7 @@
       fetch("https://api.syu.kr/v1/lecture/timetable")
         .then((response) => response.json())
         .then((data) => {
+          document.getElementById("time").textContent = data.api.time;
           courses.push(...data.api.api);
           addRandomColors();
           createCourseList();
@@ -1540,7 +1662,9 @@
           }, 0) * scale;
 
         // 스타일 크기는 그대로 유지
-        canvas.style.width = `${firstColumnWidth + defaultColumnWidth * (rows[0].cells.length - 1)}px`;
+        canvas.style.width = `${
+          firstColumnWidth + defaultColumnWidth * (rows[0].cells.length - 1)
+        }px`;
         canvas.style.height = `${rows.reduce((totalHeight, row, index) => {
           return totalHeight + (index === 0 ? firstRowHeight : rowHeight); // 첫 번째 행은 firstRowHeight, 나머지는 rowHeight
         }, 0)}px`;
@@ -1574,7 +1698,7 @@
                 cell.colSpan === 1
                   ? firstColumnWidth
                   : defaultColumnWidth * cell.colSpan,
-                currentRowHeight,
+                currentRowHeight
               );
 
               // 셀 테두리 그리기
@@ -1607,7 +1731,7 @@
                   (j === 0
                     ? 0
                     : firstColumnWidth + (j - 1) * defaultColumnWidth),
-                y,
+                y
               );
               j += cell.colSpan - 1; // colspan만큼 셀 인덱스 증가
               continue;
@@ -1623,7 +1747,7 @@
                   j === 0 ? 0 : firstColumnWidth + (j - 1) * defaultColumnWidth,
                   rectY,
                   cell.rowSpan === 1 ? firstColumnWidth : defaultColumnWidth,
-                  currentRowHeight,
+                  currentRowHeight
                 );
               }
 
@@ -1633,7 +1757,7 @@
                 j === 0 ? 0 : firstColumnWidth + (j - 1) * defaultColumnWidth,
                 currentY,
                 j === 0 ? firstColumnWidth : defaultColumnWidth,
-                currentRowHeight,
+                currentRowHeight
               );
 
               context.fillStyle = "white";
@@ -1692,7 +1816,7 @@
               j === 0 ? 0 : firstColumnWidth + (j - 1) * defaultColumnWidth,
               currentY,
               j === 0 ? firstColumnWidth : defaultColumnWidth,
-              currentRowHeight,
+              currentRowHeight
             );
 
             // 셀 테두리 그리기
@@ -1701,7 +1825,7 @@
               j === 0 ? 0 : firstColumnWidth + (j - 1) * defaultColumnWidth,
               currentY,
               j === 0 ? firstColumnWidth : defaultColumnWidth,
-              currentRowHeight,
+              currentRowHeight
             );
 
             // 텍스트 그리기
@@ -1815,19 +1939,15 @@
     </script>
 
     <script>
-      document
-        .getElementById("searchText")
-        .addEventListener("focus", function () {
-          const section = document.getElementById("courseList");
-          section.style.transform = "translateY(72%)";
-        });
+      // document.getElementById('searchText').addEventListener('focus', function() {
+      //   const section = document.getElementById('courseList');
+      //   section.style.transform = 'translateY(72%)';
+      // });
 
-      document
-        .getElementById("searchText")
-        .addEventListener("blur", function () {
-          const section = document.getElementById("courseList");
-          section.style.transform = "";
-        });
+      // document.getElementById('searchText').addEventListener('blur', function() {
+      //   const section = document.getElementById('courseList');
+      //   section.style.transform = '';
+      // });
 
       function keyEnter() {
         if (event.key === "Enter") {
@@ -1900,8 +2020,9 @@
       }
 
       function updateStatus() {
-        document.getElementById("statusText").textContent =
-          `${currentIndex + 1}/${highlightedSections.length}`;
+        document.getElementById("statusText").textContent = `${
+          currentIndex + 1
+        }/${highlightedSections.length}`;
       }
     </script>
 
@@ -1940,7 +2061,7 @@
       document.getElementById("shareButton").onclick = () => {
         navigator.clipboard
           .writeText(
-            shareLink(selectedClasses.map((course) => course.강좌번호)),
+            shareLink(selectedClasses.map((course) => course.강좌번호))
           )
           .then(() => {
             alert("링크를 복사했어요!");
@@ -1949,6 +2070,88 @@
             console.error("링크 복사에 실패했어요!");
           });
       };
+    </script>
+
+    <script>
+      const panel = document.getElementById("courseList");
+
+      let dragging = false;
+      let startY = 0;
+      let currentTranslate = 480; // 초기 위치 370px
+      const minBottom = 10; // 아래로 내려도 10px 보이게
+      const snapThreshold = 100; // 스냅 기준값 (px)
+      const maxTranslate = 480; // 최대 내려가는 위치 370px
+
+      // 초기 transform 적용
+      panel.style.transform = `translateY(${currentTranslate}px)`;
+
+      // 드래그 시작
+      function startDrag(clientY) {
+        dragging = true;
+        startY = clientY;
+        panel.style.transition = "none";
+      }
+
+      // 드래그 이동
+      function moveDrag(clientY) {
+        if (!dragging) return;
+
+        let diff = clientY - startY;
+        let newTranslate = currentTranslate + diff;
+
+        // 위 제한
+        if (newTranslate < 0) newTranslate = 0;
+
+        // 아래 제한: 최대 370px
+        if (newTranslate > maxTranslate) newTranslate = maxTranslate;
+
+        panel.style.transform = `translateY(${newTranslate}px)`;
+      }
+
+      // 드래그 끝
+      function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+
+        const style = window.getComputedStyle(panel);
+        const matrix = new DOMMatrixReadOnly(style.transform);
+        currentTranslate = matrix.m42;
+
+        // 스냅: 절반 기준
+        const middle = maxTranslate / 2;
+        if (currentTranslate < middle) {
+          currentTranslate = 0; // 완전히 올리기
+        } else {
+          currentTranslate = maxTranslate; // 최대 위치
+        }
+
+        panel.style.transition = "transform 0.2s ease";
+        panel.style.transform = `translateY(${currentTranslate}px)`;
+      }
+
+      // 모바일 터치 이벤트
+      panel.addEventListener("touchstart", (e) =>
+        startDrag(e.touches[0].clientY)
+      );
+      panel.addEventListener(
+        "touchmove",
+        (e) => {
+          if (
+            e.target.closest(".department-select") ||
+            e.target.closest(".course-items")
+          )
+            return;
+          moveDrag(e.touches[0].clientY);
+          e.preventDefault(); // 모바일 스크롤 방지
+        },
+        { passive: false }
+      );
+      panel.addEventListener("touchend", endDrag);
+
+      // PC 마우스 이벤트
+      panel.addEventListener("mousedown", (e) => startDrag(e.clientY));
+      document.addEventListener("mousemove", (e) => moveDrag(e.clientY));
+      document.addEventListener("mouseup", endDrag);
     </script>
 
     <!--<script>
