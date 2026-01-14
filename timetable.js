@@ -113,6 +113,8 @@ function updateCourseList(filteredCourses) {
   filteredCourses.forEach((course) => {
     const div = document.createElement("div");
     div.className = "course-item";
+    div.dataset.courseId = course.강좌번호;
+
     const firstLine = document.createElement("div");
     firstLine.className = "first-line";
     const secondLine = document.createElement("div");
@@ -162,7 +164,7 @@ function updateCourseList(filteredCourses) {
     div.appendChild(firstLine);
     div.appendChild(secondLine);
     div.style.color = course.color;
-    div.onclick = () => highlightClass(course);
+    // 이벤트 위임으로 처리
     courseItems.appendChild(div);
   });
 
@@ -855,6 +857,18 @@ window.onload = () => {
   initializeTimetableCells();
   initializeCellClickHandlers();
   getTimetable();
+
+  // Event delegation for course items
+  courseList.addEventListener("click", (e) => {
+    const courseItem = e.target.closest(".course-item");
+    if (courseItem) {
+      const courseId = courseItem.dataset.courseId;
+      const course = courses.find((c) => c.강좌번호 === courseId);
+      if (course) {
+        highlightClass(course);
+      }
+    }
+  });
 
   // Fetch course data
   fetch("https://api.syu.kr/v1/lecture/timetable")
