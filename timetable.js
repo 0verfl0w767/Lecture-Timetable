@@ -205,8 +205,15 @@ function updateTimetable() {
 }
 
 function highlightClass(course) {
-  selectedClasses.push(course);
-  updateTimetable();
+  // 중복 체크를 먼저 수행
+  const alreadyExists = selectedClasses.some(
+    (c) => c.강좌번호 === course.강좌번호
+  );
+
+  if (alreadyExists) {
+    alert("이미 선택한 과목이에요!");
+    return;
+  }
 
   const timeSlots = course.수업시간.split(",");
 
@@ -215,20 +222,6 @@ function highlightClass(course) {
     timeSlots[0] === "" ||
     timeSlots.some((slot) => slot.startsWith("일"))
   ) {
-    const rows = document.querySelectorAll("#timetable tbody tr");
-    const alreadyExists = [...rows].some((row) =>
-      [...row.querySelectorAll("td")].some(
-        (td) =>
-          td.dataset.courseId && td.dataset.courseId.includes(course.강좌번호)
-      )
-    );
-
-    if (alreadyExists) {
-      alert("이미 선택한 과목이에요!");
-      selectedClasses.pop();
-      return;
-    }
-
     const row = document.createElement("tr");
     const cell = document.createElement("td");
     cell.colSpan = 6;
@@ -278,9 +271,11 @@ function highlightClass(course) {
     alert(
       `[${course.과목명}] 과목은 다른 과목이랑 시간이 겹쳐요!\n\n[${course.수업시간}] 에 추가할 수 없어요!`
     );
-    selectedClasses.pop();
     return;
   }
+
+  selectedClasses.push(course);
+  updateTimetable();
 
   timeSlots.forEach((slot) => {
     const day = slot.charAt(0);
