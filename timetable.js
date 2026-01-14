@@ -240,6 +240,7 @@ function highlightClass(course) {
       document.getElementById("creditValue").textContent = `${totalCredits}`;
     };
 
+    selectedClasses.push(course);
     totalCredits += parseInt(course.학점, 10);
     document.getElementById("creditValue").textContent = `${totalCredits}`;
     return;
