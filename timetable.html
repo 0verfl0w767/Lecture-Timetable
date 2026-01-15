@@ -27,7 +27,6 @@
       property="og:description"
       content="효율적인 학기 계획을 위한 나만의 맞춤형 시간표를 만들어 보세요."
     />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="https://www.syu.kr/favicon/favicon.ico" />
     <link rel="stylesheet" href="timetable.css" />
     <link
@@ -65,11 +64,12 @@
         src="https://cdn-icons-png.flaticon.com/512/7710/7710488.png"
         width="16"
         height="16"
-        alt=""
+        alt="메뉴 열기"
+        loading="lazy"
       />
       <span id="creditValue">0</span
       ><span style="font-size: 9pt">학점을 담았어요!</span>
-      <button id="downloadImageButton">
+      <button id="downloadImageButton" type="button" aria-label="시간표 이미지 다운로드">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -86,7 +86,7 @@
           />
         </svg>
       </button>
-      <button id="shareButton">
+      <button id="shareButton" type="button" aria-label="시간표 공유 링크 복사">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -326,6 +326,8 @@
         <div class="modal-desc">
           <img
             src="./suya_.png"
+            alt="수야 캐릭터"
+            loading="lazy"
             style="
               width: 150px;
               height: auto;

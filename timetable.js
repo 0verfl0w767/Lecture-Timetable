@@ -448,8 +448,8 @@ function updateStatus() {
   }`;
 }
 
-function keyEnter() {
-  if (event.key === "Enter") {
+function keyEnter(e) {
+  if (e.key === "Enter") {
     const section = document.getElementById("courseList");
     section.style.transform = "";
     searchText();
