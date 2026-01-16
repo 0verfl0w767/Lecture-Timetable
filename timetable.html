@@ -56,6 +56,8 @@
       async
       src="https://www.googletagmanager.com/gtag/js?id=G-8E24NNDK21"
     ></script>
+    <!-- html-to-image for pixel-perfect DOM capture -->
+    <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.13/dist/html-to-image.min.js"></script>
   </head>
   <body>
     <div id="creditMessage">
@@ -69,7 +71,11 @@
       />
       <span id="creditValue">0</span
       ><span style="font-size: 9pt">학점을 담았어요!</span>
-      <button id="downloadImageButton" type="button" aria-label="시간표 이미지 다운로드">
+      <button
+        id="downloadImageButton"
+        type="button"
+        aria-label="시간표 이미지 다운로드"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"

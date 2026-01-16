@@ -42,6 +42,14 @@ let selectedClasses = [];
 let highlightedSections = [];
 let currentIndex = -1;
 
+// API base: use local proxy in file:// or localhost, else production
+const API_BASE =
+  location.protocol === "file:" ||
+  location.hostname === "localhost" ||
+  location.hostname === "127.0.0.1"
+    ? "http://localhost:3000"
+    : "https://api.syu.kr";
+
 // Initialize timetable cells
 function initializeTimetableCells() {
   const cells = document.querySelectorAll(".cell");
@@ -469,248 +477,37 @@ document.getElementById("shareButton").onclick = () => {
 };
 
 // Download functionality
-document.getElementById("downloadImageButton").onclick = () => {
-  const canvas = document.createElement("canvas");
-  const context = canvas.getContext("2d");
+document.getElementById("downloadImageButton").onclick = async () => {
+  const target = document.getElementById("timetable");
 
-  const timetable = document.getElementById("timetable");
-  const rows = Array.from(timetable.rows).filter((row) => {
-    const computedStyle = window.getComputedStyle(row);
-    return computedStyle.display !== "none";
-  });
-
-  const rowHeight = 50;
-  const firstRowHeight = 25;
-  const defaultColumnWidth = 100;
-  const firstColumnWidth = 25;
-
-  const scale = window.devicePixelRatio || 1;
-  canvas.width =
-    (firstColumnWidth + defaultColumnWidth * (rows[0].cells.length - 1)) *
-    scale;
-  canvas.height =
-    rows.reduce((totalHeight, row, index) => {
-      return totalHeight + (index === 0 ? firstRowHeight : rowHeight);
-    }, 0) * scale;
-
-  canvas.style.width = `${
-    firstColumnWidth + defaultColumnWidth * (rows[0].cells.length - 1)
-  }px`;
-  canvas.style.height = `${rows.reduce((totalHeight, row, index) => {
-    return totalHeight + (index === 0 ? firstRowHeight : rowHeight);
-  }, 0)}px`;
-
-  context.scale(scale, scale);
-  context.fillStyle = "#fff";
-  context.fillRect(0, 0, canvas.width, canvas.height);
-  context.lineWidth = 1;
-
-  let currentY = 0;
-
-  for (let i = 0; i < rows.length; i++) {
-    const row = rows[i];
-    const cells = row.cells;
-    const currentRowHeight = i === 0 ? firstRowHeight : rowHeight;
-
-    let currentX = 0;
-    for (let j = 0; j < cells.length; j++) {
-      const cell = cells[j];
-
-      if (cell.colSpan > 1) {
-        context.fillStyle = cell.style.backgroundColor || "#fff";
-        context.fillRect(
-          j === 0 ? 0 : firstColumnWidth + (j - 1) * defaultColumnWidth,
-          currentY,
-          cell.colSpan === 1
-            ? firstColumnWidth
-            : defaultColumnWidth * cell.colSpan,
-          currentRowHeight
-        );
-
-        context.fillStyle = "white";
-        context.font = `${cell.style.fontWeight} 12px ${cell.style.fontFamily}`;
-
-        let text = cell.innerHTML;
-        text = text.replace(/<div[^>]*>.*?<\/div>/g, "").trim();
-
-        const textWidth = context.measureText(text).width;
-        const x =
-          (firstColumnWidth +
-            defaultColumnWidth * (cell.colSpan - 1) -
-            textWidth) /
-          2;
-        const y = currentY + currentRowHeight / 2 + 5;
-
-        context.fillText(
-          text,
-          x + (j === 0 ? 0 : firstColumnWidth + (j - 1) * defaultColumnWidth),
-          y
-        );
-        j += cell.colSpan - 1;
-        continue;
-      }
-
-      if (cell.rowSpan > 1) {
-        for (let k = 0; k < cell.rowSpan; k++) {
-          const rectY = currentY + k * currentRowHeight;
-          context.fillStyle = cell.style.backgroundColor || "#fff";
-          context.fillRect(
-            j === 0 ? 0 : firstColumnWidth + (j - 1) * defaultColumnWidth,
-            rectY,
-            cell.rowSpan === 1 ? firstColumnWidth : defaultColumnWidth,
-            currentRowHeight
-          );
-        }
-
-        context.strokeStyle = "#777";
-        context.strokeRect(
-          j === 0 ? 0 : firstColumnWidth + (j - 1) * defaultColumnWidth,
-          currentY,
-          j === 0 ? firstColumnWidth : defaultColumnWidth,
-          currentRowHeight
-        );
-
-        context.fillStyle = "white";
-        context.font = `${cell.style.fontWeight} 12px ${cell.style.fontFamily}`;
-
-        let text = cell.innerHTML;
-        text = text.replace(/<div[^>]*>.*?<\/div>/g, "").trim();
-
-        let lines = [];
-        let currentLine = "";
-
-        for (let char of text) {
-          const testLine = currentLine + char;
-          const testWidth = context.measureText(testLine).width;
-
-          if (testWidth > (j === 0 ? firstColumnWidth : defaultColumnWidth)) {
-            if (currentLine) {
-              lines.push(currentLine);
-            }
-            currentLine = char;
-          } else {
-            currentLine = testLine;
-          }
-        }
-        lines.push(currentLine);
-
-        const lineHeight = 20;
-        for (let k = 0; k < lines.length; k++) {
-          const line = lines[k];
-          const textWidth = context.measureText(line).width;
-          const x =
-            j === 0
-              ? 5
-              : firstColumnWidth +
-                (j - 1) * defaultColumnWidth +
-                (defaultColumnWidth - textWidth) / 2;
-          const y =
-            currentY +
-            currentRowHeight / 2 +
-            lineHeight * (k - (lines.length - 1) / 2) +
-            5;
-
-          context.fillText(line, x, y);
-        }
-        continue;
-      }
-
-      const computedStyle = window.getComputedStyle(cell);
-      context.fillStyle = computedStyle.backgroundColor || "#fff";
-      context.fillRect(
-        j === 0 ? 0 : firstColumnWidth + (j - 1) * defaultColumnWidth,
-        currentY,
-        j === 0 ? firstColumnWidth : defaultColumnWidth,
-        currentRowHeight
-      );
-
-      context.strokeStyle = "#777";
-      context.strokeRect(
-        j === 0 ? 0 : firstColumnWidth + (j - 1) * defaultColumnWidth,
-        currentY,
-        j === 0 ? firstColumnWidth : defaultColumnWidth,
-        currentRowHeight
-      );
-
-      context.fillStyle = computedStyle.color || "#000";
-      context.font = `${computedStyle.fontWeight} 12px ${computedStyle.fontFamily}`;
-
-      let text = cell.innerHTML;
-      text = text.replace(/<div[^>]*>.*?<\/div>/g, "").trim();
-      let lines = [];
-      let currentLine = "";
-
-      for (let char of text) {
-        const testLine = currentLine + char;
-        const testWidth = context.measureText(testLine).width;
-
-        if (testWidth > (j === 0 ? firstColumnWidth : defaultColumnWidth)) {
-          if (currentLine) {
-            lines.push(currentLine);
-          }
-          currentLine = char;
-        } else {
-          currentLine = testLine;
-        }
-      }
-      lines.push(currentLine);
-
-      const lineHeight = 20;
-      for (let k = 0; k < lines.length; k++) {
-        const line = lines[k];
-        const textWidth = context.measureText(line).width;
-        const x =
-          j === 0
-            ? 5
-            : firstColumnWidth +
-              (j - 1) * defaultColumnWidth +
-              (defaultColumnWidth - textWidth) / 2;
-        const y =
-          currentY +
-          currentRowHeight / 2 +
-          lineHeight * (k - (lines.length - 1) / 2) +
-          5;
-
-        context.fillText(line, x, y);
-      }
-
-      currentX += j === 0 ? firstColumnWidth : defaultColumnWidth;
+  try {
+    if (document.fonts && document.fonts.ready) {
+      await document.fonts.ready;
     }
+  } catch (e) {}
 
-    currentY += currentRowHeight;
-  }
+  const options = {
+    backgroundColor: "#ffffff",
+    pixelRatio: Math.max(2, window.devicePixelRatio || 1),
+    cacheBust: true,
+    style: {
+      width: target.offsetWidth + "px",
+      height: target.offsetHeight + "px",
+    },
+    skipFonts: false,
+    preferCanvas: true,
+  };
 
-  const image = new Image();
-  image.src = "https://www.syu.kr/assets/img/banner.png";
-  image.crossOrigin = "Anonymous";
-
-  image.onload = () => {
-    const canvasMaxWidth = canvas.width;
-    const canvasMaxHeight = canvas.height;
-
-    let imgWidth = image.width;
-    let imgHeight = image.height;
-
-    const widthRatio = canvasMaxWidth / imgWidth;
-    const heightRatio = canvasMaxHeight / imgHeight;
-    const minRatio = Math.min(widthRatio, heightRatio);
-
-    imgWidth *= minRatio;
-    imgHeight *= minRatio;
-
-    const x = (canvas.width - imgWidth) / 2;
-    const y = (canvas.height - imgHeight) / 2;
-
-    context.setTransform(1, 0, 0, 1, 0, 0);
-    context.globalAlpha = 0.1;
-    context.drawImage(image, x, y, imgWidth, imgHeight);
-    context.globalAlpha = 1.0;
-
+  try {
+    const dataUrl = await htmlToImage.toPng(target, options);
     const link = document.createElement("a");
     link.download = "timetable.png";
-    link.href = canvas.toDataURL("image/png");
+    link.href = dataUrl;
     link.click();
-  };
+  } catch (err) {
+    console.error("이미지 저장 중 오류:", err);
+    alert("이미지 변환에 실패했어요. 잠시 후 다시 시도해 주세요.");
+  }
 };
 
 // Menu functionality
@@ -906,8 +703,8 @@ window.onload = () => {
     }
   });
 
-  // Fetch course data
-  fetch("https://api.syu.kr/v1/lecture/timetable")
+  // Fetch course data (via local proxy in dev)
+  fetch(`${API_BASE}/v1/lecture/timetable`)
     .then((response) => response.json())
     .then((data) => {
       document.getElementById("time").textContent = data.api.time;

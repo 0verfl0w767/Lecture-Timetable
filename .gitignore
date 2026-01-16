@@ -1,0 +1,13 @@
+# Node modules
+node_modules/
+
+# Development proxy server (not needed in repo)
+server.js
+index.js
+
+# Package lock
+package-lock.json
+
+# OS files
+.DS_Store
+Thumbs.db
