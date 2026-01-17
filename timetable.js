@@ -36,6 +36,17 @@ const times = [
   "16",
 ];
 
+// List rendering
+const COURSE_RENDER_BATCH = 200;
+const AUTO_LOAD_THRESHOLD = 150;
+
+// Render state
+let currentFilteredCourses = [];
+let renderedCourseCount = 0;
+let courseItemsContainer = null;
+let lastSearchTerm = "";
+let isAutoLoading = false;
+
 // State
 let totalCredits = 0;
 let selectedClasses = [];
@@ -97,17 +108,19 @@ function createCourseList() {
     departments[course["학부(과)"]].push(course);
   });
 
+  departmentSelect.innerHTML = '<option value="">ALL</option>';
   for (const department in departments) {
     const option = document.createElement("option");
     option.value = department;
     option.textContent = department;
     departmentSelect.appendChild(option);
   }
-  updateCourseList(courses);
+
+  renderCourseListWithFilters();
 }
 
-function updateCourseList(filteredCourses) {
-  filteredCourses.sort((a, b) => {
+function updateCourseList(filteredCourses, { resetScroll = true } = {}) {
+  currentFilteredCourses = [...filteredCourses].sort((a, b) => {
     if (a.학년 === b.학년) {
       return a.과목명.localeCompare(b.과목명);
     }
@@ -115,72 +128,175 @@ function updateCourseList(filteredCourses) {
   });
 
   const departmentDiv = courseList.querySelector(".department-select");
-  const courseItems = document.createElement("div");
-  courseItems.className = "course-items";
-
-  filteredCourses.forEach((course) => {
-    const div = document.createElement("div");
-    div.className = "course-item";
-    div.dataset.courseId = course.강좌번호;
-
-    const firstLine = document.createElement("div");
-    firstLine.className = "first-line";
-    const secondLine = document.createElement("div");
-    secondLine.className = "second-line";
-
-    const courseName = document.createElement("span");
-    courseName.className = "course-name";
-    courseName.textContent = course.과목명;
-
-    const courseNum = document.createElement("span");
-    courseNum.className = "course-num";
-    courseNum.textContent = `강좌번호: ${course.강좌번호}`;
-
-    const courseDepartment = document.createElement("span");
-    courseDepartment.className = "course-depart";
-    courseDepartment.textContent = `${course["학부(과)"]}`;
-
-    const courseGrade = document.createElement("span");
-    courseGrade.className = "course-grade";
-    courseGrade.textContent = `${course.학년}학년`;
-
-    const courseTime = document.createElement("span");
-    courseTime.className = "course-time";
-    courseTime.textContent = course.수업시간 || "?";
-
-    const courseCredit = document.createElement("span");
-    courseCredit.className = "course-credit";
-    courseCredit.textContent = `${course.학점}학점` || "?";
-
-    const courseProfessor = document.createElement("span");
-    courseProfessor.className = "course-professor";
-    courseProfessor.textContent = course.교수명 || "?";
-
-    const courseNotice = document.createElement("span");
-    courseNotice.className = "course-notice";
-    courseNotice.textContent = course.비고;
-
-    firstLine.appendChild(courseName);
-    secondLine.appendChild(courseNum);
-    secondLine.appendChild(courseDepartment);
-    secondLine.appendChild(courseGrade);
-    secondLine.appendChild(courseTime);
-    secondLine.appendChild(courseCredit);
-    secondLine.appendChild(courseProfessor);
-    if (course.비고) secondLine.appendChild(courseNotice);
-
-    div.appendChild(firstLine);
-    div.appendChild(secondLine);
-    div.style.color = course.color;
-    // 이벤트 위임으로 처리
-    courseItems.appendChild(div);
-  });
-
   const oldCourseItems = courseList.querySelector(".course-items");
   if (oldCourseItems) oldCourseItems.remove();
 
-  courseList.appendChild(departmentDiv);
-  courseList.appendChild(courseItems);
+  courseItemsContainer = document.createElement("div");
+  courseItemsContainer.className = "course-items";
+  courseItemsContainer.addEventListener("scroll", handleCourseListScroll);
+  if (departmentDiv && departmentDiv.nextSibling) {
+    courseList.insertBefore(courseItemsContainer, departmentDiv.nextSibling);
+  } else {
+    courseList.appendChild(courseItemsContainer);
+  }
+
+  renderNextBatch({ reset: true });
+
+  if (resetScroll) {
+    courseList.scrollTop = 0;
+    courseItemsContainer.scrollTop = 0;
+  }
+}
+
+function createCourseItemElement(course) {
+  const div = document.createElement("div");
+  div.className = "course-item";
+  div.dataset.courseId = course.강좌번호;
+
+  const firstLine = document.createElement("div");
+  firstLine.className = "first-line";
+  const secondLine = document.createElement("div");
+  secondLine.className = "second-line";
+
+  const courseName = document.createElement("span");
+  courseName.className = "course-name";
+  courseName.textContent = course.과목명;
+
+  const courseNum = document.createElement("span");
+  courseNum.className = "course-num";
+  courseNum.textContent = `강좌번호: ${course.강좌번호}`;
+
+  const courseDepartment = document.createElement("span");
+  courseDepartment.className = "course-depart";
+  courseDepartment.textContent = `${course["학부(과)"]}`;
+
+  const courseGrade = document.createElement("span");
+  courseGrade.className = "course-grade";
+  courseGrade.textContent = `${course.학년}학년`;
+
+  const courseTime = document.createElement("span");
+  courseTime.className = "course-time";
+  courseTime.textContent = course.수업시간 || "?";
+
+  const courseCredit = document.createElement("span");
+  courseCredit.className = "course-credit";
+  courseCredit.textContent = `${course.학점}학점` || "?";
+
+  const courseProfessor = document.createElement("span");
+  courseProfessor.className = "course-professor";
+  courseProfessor.textContent = course.교수명 || "?";
+
+  const courseNotice = document.createElement("span");
+  courseNotice.className = "course-notice";
+  courseNotice.textContent = course.비고;
+
+  firstLine.appendChild(courseName);
+  secondLine.appendChild(courseNum);
+  secondLine.appendChild(courseDepartment);
+  secondLine.appendChild(courseGrade);
+  secondLine.appendChild(courseTime);
+  secondLine.appendChild(courseCredit);
+  secondLine.appendChild(courseProfessor);
+  if (course.비고) secondLine.appendChild(courseNotice);
+
+  div.appendChild(firstLine);
+  div.appendChild(secondLine);
+  div.style.color = course.color;
+  return div;
+}
+
+function renderNextBatch({ reset = false } = {}) {
+  if (!courseItemsContainer) return;
+
+  if (reset) {
+    courseItemsContainer.innerHTML = "";
+    renderedCourseCount = 0;
+  }
+
+  const next = currentFilteredCourses.slice(
+    renderedCourseCount,
+    renderedCourseCount + COURSE_RENDER_BATCH,
+  );
+
+  next.forEach((course) => {
+    const element = createCourseItemElement(course);
+    courseItemsContainer.appendChild(element);
+  });
+
+  renderedCourseCount += next.length;
+}
+
+function handleCourseListScroll(event) {
+  if (isAutoLoading) return;
+
+  const scrollEl = event?.target || courseItemsContainer || courseList;
+  if (!scrollEl) return;
+
+  const hasMore = renderedCourseCount < currentFilteredCourses.length;
+  if (!hasMore) return;
+
+  const distanceToBottom =
+    scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight;
+
+  if (distanceToBottom <= AUTO_LOAD_THRESHOLD) {
+    isAutoLoading = true;
+    requestAnimationFrame(() => {
+      renderNextBatch();
+      refreshHighlights({ scroll: false });
+      isAutoLoading = false;
+    });
+  }
+}
+
+function matchesSearchTerm(course, term) {
+  if (!term) return true;
+
+  const normalized = term.toLowerCase();
+  const target =
+    `${course.과목명} ${course.강좌번호} ${course["학부(과)"]} ${course.학년} ${course.교수명} ${course.수업시간} ${course.학점}`.toLowerCase();
+  return target.includes(normalized);
+}
+
+function renderCourseListWithFilters({ scrollHighlight = true } = {}) {
+  const selectedDepartment = departmentSelect.value;
+  const baseCourses = selectedDepartment
+    ? courses.filter((course) => course["학부(과)"] === selectedDepartment)
+    : courses;
+
+  const filtered = baseCourses.filter((course) =>
+    matchesSearchTerm(course, lastSearchTerm),
+  );
+
+  updateCourseList(filtered);
+  refreshHighlights({ scroll: scrollHighlight });
+}
+
+function refreshHighlights({ scroll = true } = {}) {
+  highlightedSections = [];
+
+  const sections = document.querySelectorAll(".course-item");
+  sections.forEach((section) => {
+    if (lastSearchTerm) {
+      section.classList.add("highlight");
+      highlightedSections.push(section);
+    } else {
+      section.classList.remove("highlight");
+    }
+  });
+
+  if (lastSearchTerm && highlightedSections.length > 0) {
+    currentIndex = 0;
+    updateStatus();
+    if (scroll) {
+      highlightedSections[0].scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  } else {
+    currentIndex = -1;
+    document.getElementById("statusText").textContent = "0/0";
+  }
 }
 
 // Timetable management
@@ -398,36 +514,11 @@ function initializeCellClickHandlers() {
 
 // Search functionality
 function searchText() {
-  const searchTerm = document.getElementById("searchText").value.toLowerCase();
-  const sections = document.querySelectorAll(".course-item");
-
-  sections.forEach((section) => {
-    section.classList.remove("highlight");
-  });
-
-  if (!searchTerm) return;
-
-  highlightedSections = [];
-  currentIndex = -1;
-
-  sections.forEach((section, index) => {
-    const text = section.textContent.toLowerCase();
-    if (text.includes(searchTerm)) {
-      section.classList.add("highlight");
-      highlightedSections.push(section);
-    }
-  });
-
-  if (highlightedSections.length > 0) {
-    currentIndex = 0;
-    updateStatus();
-    highlightedSections[currentIndex].scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-    });
-  } else {
-    document.getElementById("statusText").textContent = "0/0";
-  }
+  lastSearchTerm = document
+    .getElementById("searchText")
+    .value.trim()
+    .toLowerCase();
+  renderCourseListWithFilters();
 }
 
 function navigate(direction) {
@@ -587,11 +678,7 @@ document.addEventListener("mouseup", endDrag);
 
 // Department select
 departmentSelect.onchange = () => {
-  const selectedDepartment = departmentSelect.value;
-  const filteredCourses = selectedDepartment
-    ? courses.filter((course) => course["학부(과)"] === selectedDepartment)
-    : courses;
-  updateCourseList(filteredCourses);
+  renderCourseListWithFilters({ scrollHighlight: false });
 };
 
 // Cookie management
@@ -702,6 +789,9 @@ window.onload = () => {
       }
     }
   });
+
+  // Auto-load more on scroll
+  courseList.addEventListener("scroll", handleCourseListScroll);
 
   // Fetch course data (via local proxy in dev)
   fetch(`${API_BASE}/v1/lecture/timetable`)
