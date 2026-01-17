@@ -147,10 +147,10 @@
           <select id="departmentSelect">
             <option value="">ALL</option>
           </select>
-          <div class="drag-message">
+          <!-- <div class="drag-message">
             <span class="tips">TIPS</span>자유롭게 시간표를 만들어 공유
             해보세요!
-          </div>
+          </div> -->
         </div>
         <div>
           <span class="search">검색</span>
@@ -354,27 +354,62 @@
           <!--<p style="color: red;">※ <strong style="padding: 2px; border-radius: 4px; background-color: rgb(255 51 51 / 10%); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">학교 사정</strong> 에 따라 강의 시간이나 교수가 갑작스럽게 변경될 수 있어요!</p>-->
           <hr />
           <p>
-            시간표를 만들고
+            시간표를 만들고 우측 상단의
             <strong
               style="
-                padding: 2px;
-                border-radius: 4px;
-                background-color: rgb(51 93 255 / 10%);
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                padding: 4px 4px;
+                border-radius: 6px;
+                background: linear-gradient(135deg, #0076ff 0%, #005bb5 100%);
+                color: white;
+                box-shadow: 0 2px 6px rgba(0, 76, 255, 0.3);
               "
-              >[공유하기]</strong
             >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                fill="currentColor"
+                viewBox="0 0 16 16"
+                style="vertical-align: middle"
+              >
+                <path
+                  d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5m-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3"
+                />
+              </svg>
+            </strong>
             또는
             <strong
               style="
-                padding: 2px;
-                border-radius: 4px;
-                background-color: rgb(51 93 255 / 10%);
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                padding: 4px 4px;
+                border-radius: 6px;
+                background: linear-gradient(135deg, #0076ff 0%, #005bb5 100%);
+                color: white;
+                box-shadow: 0 2px 6px rgba(0, 76, 255, 0.3);
               "
-              >[다운로드]</strong
             >
-            아이콘을 누르면 공유하거나 사진으로 다운받을 수 있어요.
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                fill="currentColor"
+                viewBox="0 0 16 16"
+                style="vertical-align: middle"
+              >
+                <path
+                  d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
+                />
+                <path
+                  d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"
+                />
+              </svg>
+            </strong>
+            을 누르면 공유하거나 사진으로 다운받을 수 있어요.
           </p>
           <p>
             검색 도구를 이용해

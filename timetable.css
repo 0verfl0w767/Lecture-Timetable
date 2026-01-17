@@ -223,11 +223,11 @@ td {
   justify-content: center;
   align-items: center;
   cursor: grab;
-  background: linear-gradient(
+  /* background: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 0.15),
     rgba(255, 255, 255, 0)
-  );
+  ); */
 }
 
 .drag-handle .bar {
@@ -256,30 +256,41 @@ td {
 }
 
 .course-item {
-  padding: 15px;
+  padding: 16px 18px;
   cursor: pointer;
   transition:
-    background-color 0.2s,
-    transform 0.2s;
-  border-radius: 6px;
-  margin: 10px;
-  border: 1px solid #e0e0e0;
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 3px;
+  margin: 8px 0;
+  border-left: 3px solid #0076ff;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .course-item:hover {
-  background-color: #e0f0ff;
-  transform: scale(1.02);
+  border-left-color: #005bb5;
+  box-shadow: 0 6px 16px rgba(0, 76, 255, 0.12);
+  transform: translateX(2px);
+}
+
+.first-line {
+  margin-bottom: 10px;
 }
 
 .second-line {
   display: flex;
   flex-wrap: wrap;
+  gap: 6px;
 }
 
 .course-name {
-  color: black;
+  color: #000000;
   font-size: 1.1em;
-  line-height: 1.5;
+  line-height: 1.6;
+  font-weight: 800;
+  display: block;
 }
 
 .course-num,
@@ -289,33 +300,47 @@ td {
 .course-grade,
 .course-professor,
 .course-notice {
-  border-radius: 4px;
-  background-color: rgb(51 93 255 / 10%);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-size: 0.6em;
-  padding: 3px;
-  margin-right: 3px;
-  margin-block: 3px;
-  line-height: 1.5em;
+  border-radius: 6px;
+  font-size: 0.7em;
+  padding: 4px 8px;
+  line-height: 1.4;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .course-num {
-  color: #001dff80;
+  background-color: #e3f2fd;
+  color: #0d47a1;
 }
 
 .course-depart {
-  color: #7c00ff80;
+  background-color: #f3e5f5;
+  color: #4a148c;
 }
 
-.course-time,
-.course-credit,
-.course-grade,
+.course-time {
+  background-color: #e0f2f1;
+  color: #00695c;
+}
+
+.course-credit {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.course-grade {
+  background-color: #fce4ec;
+  color: #c2185b;
+}
+
 .course-professor {
-  color: #555;
+  background-color: #f1f8e9;
+  color: #33691e;
 }
 
 .course-notice {
-  color: #ff7474;
+  background-color: #ffebee;
+  color: #b71c1c;
 }
 
 .toggle-button {
@@ -385,12 +410,13 @@ td {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.5);
   opacity: 0;
   transform: scale(1.1);
   transition:
     opacity 0.5s ease,
     transform 0.5s ease;
+  backdrop-filter: blur(2px);
 }
 
 .modal.show {
@@ -400,36 +426,48 @@ td {
 }
 
 .modal-content {
-  background-color: #fefefe;
-  font-size: 10pt;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  font-size: 11pt;
   font-weight: 500;
-  margin: 50pt auto;
-  padding: 20px;
-  border-top: 3px solid #0076ff;
-  border-radius: 6px;
+  margin: 80px auto;
+  padding: 32px;
+  border: 1px solid #e8f0ff;
+  border-radius: 8px;
   width: 80%;
   max-width: 500px;
+  box-shadow: 0 10px 40px rgba(0, 76, 255, 0.15);
+  animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modal-title {
   position: relative;
   text-align: center;
   padding: 0 40px;
-}
-
-p {
-  word-break: keep-all;
+  margin-bottom: 20px;
 }
 
 .modal-title div {
-  font-weight: bold;
-  font-size: 17pt;
+  font-weight: 800;
+  font-size: 20pt;
   text-align: center;
-  flex-grow: 1;
+  color: #0076ff;
 }
 
 .modal-desc {
-  padding-block: 40px;
+  padding-block: 20px;
+  color: #555;
+  line-height: 1.8;
 }
 
 .close-button {
@@ -437,9 +475,11 @@ p {
   right: 10px;
   top: 50%;
   color: #0076ff;
-  font-size: 20pt;
+  font-size: 24pt;
   transform: translateY(-50%);
   cursor: pointer;
+  transition: color 0.3s ease;
+  font-weight: 300;
 }
 
 .close-button:hover,
@@ -455,14 +495,23 @@ p {
 
 #creditMessage {
   text-align: center;
-  font-size: 16px;
-  margin: 10px;
-  padding: 10px;
-  background-color: #f9f9f9;
+  font-size: 15px;
+  margin: 12px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
   border: 1px solid #0076ff;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(0, 76, 255, 0.08);
   position: relative;
+  font-weight: 600;
+  color: #333;
+  letter-spacing: 0.3px;
+}
+
+#creditMessage span:first-child {
+  font-weight: 800;
+  color: #0076ff;
+  margin-right: 4px;
 }
 
 #downloadImageButton,
@@ -475,16 +524,17 @@ p {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: #0076ff;
+  background: linear-gradient(135deg, #0076ff 0%, #005bb5 100%);
   color: white;
   border: none;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 76, 255, 0.3);
   transition:
-    background-color 0.3s,
-    transform 0.3s;
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
-  width: 28px;
+  width: 32px;
+  cursor: pointer;
 }
 
 #downloadImageButton {
@@ -502,7 +552,8 @@ p {
 #downloadImageButton:hover,
 #shareButton:hover,
 #detailButton:hover {
-  background-color: #005bb5;
+  box-shadow: 0 6px 20px rgba(0, 76, 255, 0.4);
+  transform: translateY(-52%) scale(1.08);
 }
 
 .course-items {
@@ -610,7 +661,103 @@ select {
 }
 
 @media (max-width: 550px) {
+  .modal-content {
+    width: 90%;
+    max-width: 100%;
+    margin: 60px auto;
+    padding: 24px;
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
+
+  .modal-title {
+    padding: 0 20px;
+  }
+
+  .modal-title div {
+    font-size: 18pt;
+  }
+
+  .modal-desc {
+    font-size: 9pt !important;
+    padding-block: 15px;
+  }
+
+  .close-button {
+    font-size: 20pt;
+    right: 5px;
+  }
+
+  #creditMessage {
+    margin: 10px 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+    box-sizing: border-box;
+  }
+
+  #downloadImageButton,
+  #shareButton,
+  #detailButton {
+    width: 28px;
+  }
+
+  #downloadImageButton {
+    right: 8px;
+  }
+
+  #shareButton {
+    right: 40px;
+  }
+
+  #detailButton {
+    right: 72px;
+  }
+
+  .course-item {
+    margin: 6px 2px;
+    padding: 14px 12px;
+    box-sizing: border-box;
+  }
+
+  .course-name {
+    font-size: 0.95em;
+  }
+
+  .course-num,
+  .course-depart,
+  .course-time,
+  .course-credit,
+  .course-grade,
+  .course-professor,
+  .course-notice {
+    font-size: 0.65em;
+    padding: 3px 6px;
+  }
+
   input {
-    width: 120px;
+    width: 140px;
+    padding: 8px 10px;
+    font-size: 0.9em;
+    margin: 0 4px;
+    box-sizing: border-box;
+  }
+
+  #departmentSelect {
+    padding: 8px 12px;
+    font-size: 0.9em;
+    margin: 0 4px;
+    box-sizing: border-box;
+  }
+
+  table {
+    font-size: 9pt;
+  }
+
+  td {
+    height: 50px;
+  }
+
+  .detail {
+    font-size: 4pt;
   }
 }
