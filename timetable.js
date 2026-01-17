@@ -215,7 +215,7 @@ function updateTimetable() {
 function highlightClass(course) {
   // 중복 체크를 먼저 수행
   const alreadyExists = selectedClasses.some(
-    (c) => c.강좌번호 === course.강좌번호
+    (c) => c.강좌번호 === course.강좌번호,
   );
 
   if (alreadyExists) {
@@ -242,7 +242,7 @@ function highlightClass(course) {
     row.onclick = () => {
       row.remove();
       selectedClasses = selectedClasses.filter(
-        (c) => c.강좌번호 !== course.강좌번호
+        (c) => c.강좌번호 !== course.강좌번호,
       );
       totalCredits -= parseInt(course.학점, 10);
       document.getElementById("creditValue").textContent = `${totalCredits}`;
@@ -278,7 +278,7 @@ function highlightClass(course) {
 
   if (conflict) {
     alert(
-      `[${course.과목명}] 과목은 다른 과목이랑 시간이 겹쳐요!\n\n[${course.수업시간}] 에 추가할 수 없어요!`
+      `[${course.과목명}] 과목은 다른 과목이랑 시간이 겹쳐요!\n\n[${course.수업시간}] 에 추가할 수 없어요!`,
     );
     return;
   }
@@ -333,17 +333,16 @@ function initializeCellClickHandlers() {
 
       if (courseId) {
         const courseToRemove = courses.find(
-          (course) => course.강좌번호 === courseId
+          (course) => course.강좌번호 === courseId,
         );
 
         if (courseToRemove) {
           selectedClasses = selectedClasses.filter(
-            (course) => course.강좌번호 !== courseId
+            (course) => course.강좌번호 !== courseId,
           );
           totalCredits -= parseInt(courseToRemove.학점, 10);
-          document.getElementById(
-            "creditValue"
-          ).textContent = `${totalCredits}`;
+          document.getElementById("creditValue").textContent =
+            `${totalCredits}`;
         }
 
         cells.forEach((innerCell) => {
@@ -378,7 +377,7 @@ function initializeCellClickHandlers() {
               .slice(1)
               .every((td) => !td.textContent.trim());
             const isRowspan = Array.from(row.children).some(
-              (td) => td.style.display === "none"
+              (td) => td.style.display === "none",
             );
 
             if (isRowspan) {
@@ -454,14 +453,6 @@ function updateStatus() {
   document.getElementById("statusText").textContent = `${currentIndex + 1}/${
     highlightedSections.length
   }`;
-}
-
-function keyEnter(e) {
-  if (e.key === "Enter") {
-    const section = document.getElementById("courseList");
-    section.style.transform = "";
-    searchText();
-  }
 }
 
 // Share functionality
@@ -586,7 +577,7 @@ panel.addEventListener(
     moveDrag(e.touches[0].clientY);
     e.preventDefault();
   },
-  { passive: false }
+  { passive: false },
 );
 panel.addEventListener("touchend", endDrag);
 
@@ -690,6 +681,15 @@ window.onload = () => {
   initializeTimetableCells();
   initializeCellClickHandlers();
   getTimetable();
+
+  // Search input Enter key handler
+  document.getElementById("searchText").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      const section = document.getElementById("courseList");
+      section.style.transform = "";
+      searchText();
+    }
+  });
 
   // Event delegation for course items
   courseList.addEventListener("click", (e) => {
