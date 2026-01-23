@@ -8,7 +8,6 @@ gtag("config", "G-8E24NNDK21");
 
 // DOM Elements
 const courseList = document.getElementById("courseList");
-const toggleButton = document.getElementById("toggleButton");
 const departmentSelect = document.getElementById("departmentSelect");
 const menuButton = document.getElementById("menuButton");
 const menu = document.getElementById("menu");
@@ -108,7 +107,7 @@ function createCourseList() {
     departments[course["학부(과)"]].push(course);
   });
 
-  departmentSelect.innerHTML = '<option value="">ALL</option>';
+  departmentSelect.innerHTML = '<option value="">전체 학부(과)</option>';
   for (const department in departments) {
     const option = document.createElement("option");
     option.value = department;
@@ -190,6 +189,10 @@ function createCourseItemElement(course) {
   courseNotice.className = "course-notice";
   courseNotice.textContent = course.비고;
 
+  const courseType = document.createElement("span");
+  courseType.className = "course-type";
+  courseType.textContent = `${course.이수구분}`;
+
   firstLine.appendChild(courseName);
   secondLine.appendChild(courseNum);
   secondLine.appendChild(courseDepartment);
@@ -198,6 +201,7 @@ function createCourseItemElement(course) {
   secondLine.appendChild(courseCredit);
   secondLine.appendChild(courseProfessor);
   if (course.비고) secondLine.appendChild(courseNotice);
+  if (course.이수구분) secondLine.appendChild(courseType);
 
   div.appendChild(firstLine);
   div.appendChild(secondLine);
@@ -253,15 +257,49 @@ function matchesSearchTerm(course, term) {
 
   const normalized = term.toLowerCase();
   const target =
-    `${course.과목명} ${course.강좌번호} ${course["학부(과)"]} ${course.학년} ${course.교수명} ${course.수업시간} ${course.학점}`.toLowerCase();
+    `${course.과목명} ${course.강좌번호} ${course["학부(과)"]} ${course.학년}학년 ${course.교수명} ${course.수업시간} ${course.학점}학점`.toLowerCase();
   return target.includes(normalized);
 }
 
 function renderCourseListWithFilters({ scrollHighlight = true } = {}) {
   const selectedDepartment = departmentSelect.value;
-  const baseCourses = selectedDepartment
+  const selectedGradeEls = Array.from(
+    document.querySelectorAll(".grade-btn.active"),
+  )
+    .map((el) => el.dataset.grade)
+    .filter((g) => g !== "");
+  const selectedGrades = selectedGradeEls;
+  const selectedTypes = Array.from(
+    document.querySelectorAll(".type-btn.active"),
+  ).map((el) => el.dataset.type);
+
+  let baseCourses = selectedDepartment
     ? courses.filter((course) => course["학부(과)"] === selectedDepartment)
-    : courses;
+    : [...courses];
+
+  if (selectedGrades && selectedGrades.length > 0) {
+    baseCourses = baseCourses.filter((course) =>
+      selectedGrades.includes(String(course.학년)),
+    );
+  }
+
+  if (selectedTypes.length > 0) {
+    baseCourses = baseCourses.filter((course) => {
+      const typeField = (course.이수구분 || course["이수구분"] || "") + "";
+      const norm = typeField.toString();
+      return selectedTypes.some((t) => norm.indexOf(t) !== -1);
+    });
+  }
+
+  const selectedDays = Array.from(
+    document.querySelectorAll(".day-btn.active"),
+  ).map((el) => el.dataset.day);
+  if (selectedDays.length > 0) {
+    baseCourses = baseCourses.filter((course) => {
+      const timeField = (course.수업시간 || "") + "";
+      return selectedDays.some((d) => timeField.indexOf(d) !== -1);
+    });
+  }
 
   const filtered = baseCourses.filter((course) =>
     matchesSearchTerm(course, lastSearchTerm),
@@ -286,7 +324,7 @@ function refreshHighlights({ scroll = true } = {}) {
 
   if (lastSearchTerm && highlightedSections.length > 0) {
     currentIndex = 0;
-    updateStatus();
+    // updateStatus();
     if (scroll) {
       highlightedSections[0].scrollIntoView({
         behavior: "smooth",
@@ -295,7 +333,7 @@ function refreshHighlights({ scroll = true } = {}) {
     }
   } else {
     currentIndex = -1;
-    document.getElementById("statusText").textContent = "0/0";
+    // document.getElementById("statusText").textContent = "0/0";
   }
 }
 
@@ -414,7 +452,7 @@ function highlightClass(course) {
       if (firstCell) {
         firstCell.setAttribute("data-course-id", course.강좌번호);
         firstCell.style.backgroundColor = course.color;
-        firstCell.innerHTML = `${course.과목명} <div class="detail">(${course.강좌번호}) (${course.교수명})</div>`;
+        firstCell.innerHTML = `${course.과목명} <div class="detail">${course.강좌번호} - ${course.교수명}</div>`;
         firstCell.setAttribute("rowspan", endTime - startTime + 1);
       }
 
@@ -431,7 +469,7 @@ function highlightClass(course) {
       if (cell) {
         cell.setAttribute("data-course-id", course.강좌번호);
         cell.style.backgroundColor = course.color;
-        cell.innerHTML = `${course.과목명} <div class="detail">(${course.강좌번호}) (${course.교수명})</div>`;
+        cell.innerHTML = `${course.과목명} <div class="detail">${course.강좌번호} - ${course.교수명}</div>`;
       }
     }
   });
@@ -533,18 +571,18 @@ function navigate(direction) {
     currentIndex++;
   }
 
-  updateStatus();
+  // updateStatus();
   highlightedSections[currentIndex].scrollIntoView({
     behavior: "smooth",
     block: "center",
   });
 }
 
-function updateStatus() {
-  document.getElementById("statusText").textContent = `${currentIndex + 1}/${
-    highlightedSections.length
-  }`;
-}
+// function updateStatus() {
+//   document.getElementById("statusText").textContent = `${currentIndex + 1}/${
+//     highlightedSections.length
+//   }`;
+// }
 
 // Share functionality
 document.getElementById("shareButton").onclick = () => {
@@ -612,10 +650,10 @@ document.addEventListener("click", (event) => {
 const panel = document.getElementById("courseList");
 let dragging = false;
 let startY = 0;
-let currentTranslate = 480;
+let currentTranslate = 445;
 const minBottom = 10;
 const snapThreshold = 100;
-const maxTranslate = 480;
+const maxTranslate = 445;
 
 panel.style.transform = `translateY(${currentTranslate}px)`;
 
@@ -763,6 +801,120 @@ window.onload = () => {
       }, 500);
     }
   };
+
+  // Detail options modal handlers
+  const detailButton = document.getElementById("detailOptionsButton");
+  const detailModal = document.getElementById("detailModal");
+  const optionsClose = document.querySelector(".options-close-button");
+  const applyButton = document.getElementById("applyDetailOptions");
+
+  if (detailButton && detailModal) {
+    detailButton.onclick = () => {
+      detailModal.style.display = "block";
+      setTimeout(() => detailModal.classList.add("show"), 10);
+    };
+  }
+
+  if (optionsClose && detailModal) {
+    optionsClose.onclick = () => {
+      detailModal.classList.remove("show");
+      setTimeout(() => {
+        detailModal.style.display = "none";
+      }, 500);
+    };
+  }
+
+  if (detailModal) {
+    detailModal.addEventListener("click", (e) => {
+      if (e.target === detailModal) {
+        detailModal.classList.remove("show");
+        setTimeout(() => {
+          detailModal.style.display = "none";
+        }, 500);
+      }
+    });
+  }
+
+  if (applyButton) {
+    applyButton.onclick = () => {
+      try {
+        renderCourseListWithFilters({ scrollHighlight: true });
+      } catch (e) {
+        console.error("필터 적용 중 오류:", e);
+      }
+
+      detailModal.classList.remove("show");
+      setTimeout(() => {
+        detailModal.style.display = "none";
+      }, 500);
+    };
+  }
+
+  (function setupGradeToggle() {
+    const gradeButtons = document.querySelectorAll(".grade-btn");
+    if (!gradeButtons || gradeButtons.length === 0) return;
+
+    gradeButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const allBtn = document.querySelector('.grade-btn[data-grade=""]');
+        if (btn.dataset.grade === "") {
+          gradeButtons.forEach((b) => {
+            if (b !== btn) {
+              b.classList.remove("active");
+              b.setAttribute("aria-pressed", "false");
+            }
+          });
+          btn.classList.add("active");
+          btn.setAttribute("aria-pressed", "true");
+          return;
+        }
+
+        const isActive = btn.classList.toggle("active");
+        btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+
+        const any = Array.from(gradeButtons).some(
+          (b) => b.dataset.grade !== "" && b.classList.contains("active"),
+        );
+        if (any) {
+          if (allBtn) {
+            allBtn.classList.remove("active");
+            allBtn.setAttribute("aria-pressed", "false");
+          }
+        } else {
+          if (allBtn) {
+            allBtn.classList.add("active");
+            allBtn.setAttribute("aria-pressed", "true");
+          }
+        }
+      });
+    });
+  })();
+
+  // Type toggle interaction: multi-select buttons
+  (function setupTypeToggle() {
+    const typeButtons = document.querySelectorAll(".type-btn");
+    if (!typeButtons || typeButtons.length === 0) return;
+
+    typeButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const isActive = btn.classList.toggle("active");
+        btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+    });
+  })();
+
+  // Day toggle interaction: multi-select weekday buttons
+  (function setupDayToggle() {
+    const dayButtons = document.querySelectorAll(".day-btn");
+    if (!dayButtons || dayButtons.length === 0) return;
+
+    dayButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const isActive = btn.classList.toggle("active");
+        btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+    });
+  })();
 
   // Initialize app
   initializeTimetableCells();
