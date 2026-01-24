@@ -389,7 +389,9 @@ function highlightClass(course) {
     cell.colSpan = 6;
     cell.setAttribute("data-course-id", course.강좌번호);
     cell.style.backgroundColor = course.color;
-    cell.textContent = `${course.과목명} (${course.교수명})`;
+    const profName =
+      course.교수명 && course.교수명.trim() ? course.교수명 : "미지정";
+    cell.textContent = `${course.과목명} (${profName})`;
     row.appendChild(cell);
     document.querySelector("#timetable tbody").appendChild(row);
 
@@ -452,7 +454,9 @@ function highlightClass(course) {
       if (firstCell) {
         firstCell.setAttribute("data-course-id", course.강좌번호);
         firstCell.style.backgroundColor = course.color;
-        firstCell.innerHTML = `${course.과목명} <div class="detail">${course.강좌번호} - ${course.교수명}</div>`;
+        const profName =
+          course.교수명 && course.교수명.trim() ? course.교수명 : "미지정";
+        firstCell.innerHTML = `${course.과목명} <div class="detail">${course.강좌번호} - ${profName}</div>`;
         firstCell.setAttribute("rowspan", endTime - startTime + 1);
       }
 
@@ -469,7 +473,9 @@ function highlightClass(course) {
       if (cell) {
         cell.setAttribute("data-course-id", course.강좌번호);
         cell.style.backgroundColor = course.color;
-        cell.innerHTML = `${course.과목명} <div class="detail">${course.강좌번호} - ${course.교수명}</div>`;
+        const profName =
+          course.교수명 && course.교수명.trim() ? course.교수명 : "미지정";
+        cell.innerHTML = `${course.과목명} <div class="detail">${course.강좌번호} - ${profName}</div>`;
       }
     }
   });
@@ -915,6 +921,35 @@ window.onload = () => {
       });
     });
   })();
+
+  // Equalize widths of filter groups to match the 'type' group
+  function equalizeFilterGroupWidths() {
+    const ref = document.querySelector(".type-toggle");
+    if (!ref) return;
+    const width = ref.offsetWidth;
+    const groups = document.querySelectorAll(
+      ".grade-toggle.segmented, .day-toggle.segmented",
+    );
+    groups.forEach((g) => {
+      g.style.width = width + "px";
+    });
+  }
+
+  // Recompute on resize
+  window.addEventListener("resize", () => {
+    setTimeout(equalizeFilterGroupWidths, 80);
+  });
+
+  // Run when modal opens so widths are correct
+  if (detailButton && detailModal) {
+    const prevHandler = detailButton.onclick;
+    detailButton.onclick = () => {
+      if (typeof prevHandler === "function") prevHandler();
+      setTimeout(equalizeFilterGroupWidths, 40);
+    };
+  }
+
+  setTimeout(equalizeFilterGroupWidths, 120);
 
   // Initialize app
   initializeTimetableCells();
