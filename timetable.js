@@ -478,7 +478,11 @@ function highlightClass(course) {
         const profName =
           course.교수명 && course.교수명.trim() ? course.교수명 : "미지정";
         const rawPlace = course.장소 && course.장소.trim() ? course.장소 : "";
-        let place = rawPlace.replace(/강의실/gi, "").trim();
+        let place = rawPlace
+          .replace(/강의실/gi, "")
+          .replace(/\s*[\(\（][^\)\）]*[\)\）]/g, "")
+          .replace(/호.*/, "호")
+          .trim();
         if (place === "미지정") place = "";
         firstCell.innerHTML = `${course.과목명} <div class="detail"><div class="meta">${course.강좌번호}·${profName}</div><div class="place" title="${place}">${place}</div></div>`;
         firstCell.setAttribute("rowspan", endTime - startTime + 1);
@@ -500,7 +504,11 @@ function highlightClass(course) {
         const profName =
           course.교수명 && course.교수명.trim() ? course.교수명 : "미지정";
         const rawPlace = course.장소 && course.장소.trim() ? course.장소 : "";
-        let place = rawPlace.replace(/강의실/gi, "").trim();
+        let place = rawPlace
+          .replace(/강의실/gi, "")
+          .replace(/\s*[\(\（][^\)\）]*[\)\）]/g, "")
+          .replace(/호.*/, "호")
+          .trim();
         if (place === "미지정") place = "";
         cell.innerHTML = `${course.과목명} <div class="detail"><div class="meta">${course.강좌번호}·${profName}</div><div class="place" title="${place}">${place}</div></div>`;
       }
