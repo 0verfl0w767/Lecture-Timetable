@@ -87,6 +87,35 @@ button {
   border-left: none;
 }
 
+.search-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.search-wrapper .search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  color: #0076ff;
+  pointer-events: auto;
+  cursor: pointer;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.06));
+}
+
+.search-wrapper .search-icon path {
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.search-wrapper input {
+  padding-right: 48px;
+}
+
 #detailOptionsButton.attached-left {
   height: 40px;
   /* padding: 9.5px 12px; */
@@ -205,7 +234,25 @@ td {
 }
 
 .detail {
-  font-size: 5pt;
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.7);
+  text-align: center;
+  padding-top: 6px;
+}
+
+.detail .meta {
+  color: rgba(0, 0, 0, 0.6);
+  /* margin-bottom: 3px; */
+}
+
+.detail .place {
+  white-space: normal;
+  overflow: visible;
+  display: block;
+  color: rgba(0, 0, 0, 0.55);
+  line-height: 1.2;
 }
 
 @media (max-width: 550px) {
@@ -926,6 +973,6 @@ td {
   }
 
   .detail {
-    font-size: 4pt;
+    font-size: 5pt;
   }
 }

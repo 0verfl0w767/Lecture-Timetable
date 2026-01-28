@@ -456,7 +456,10 @@ function highlightClass(course) {
         firstCell.style.backgroundColor = course.color;
         const profName =
           course.교수명 && course.교수명.trim() ? course.교수명 : "미지정";
-        firstCell.innerHTML = `${course.과목명} <div class="detail">${course.강좌번호} - ${profName}</div>`;
+        const rawPlace = course.장소 && course.장소.trim() ? course.장소 : "";
+        let place = rawPlace.replace(/강의실/gi, "").trim();
+        if (place === "미지정") place = "";
+        firstCell.innerHTML = `${course.과목명} <div class="detail"><div class="meta">${course.강좌번호}·${profName}</div><div class="place" title="${place}">${place}</div></div>`;
         firstCell.setAttribute("rowspan", endTime - startTime + 1);
       }
 
@@ -475,7 +478,10 @@ function highlightClass(course) {
         cell.style.backgroundColor = course.color;
         const profName =
           course.교수명 && course.교수명.trim() ? course.교수명 : "미지정";
-        cell.innerHTML = `${course.과목명} <div class="detail">${course.강좌번호} - ${profName}</div>`;
+        const rawPlace = course.장소 && course.장소.trim() ? course.장소 : "";
+        let place = rawPlace.replace(/강의실/gi, "").trim();
+        if (place === "미지정") place = "";
+        cell.innerHTML = `${course.과목명} <div class="detail"><div class="meta">${course.강좌번호}·${profName}</div><div class="place" title="${place}">${place}</div></div>`;
       }
     }
   });
@@ -964,6 +970,24 @@ window.onload = () => {
       searchText();
     }
   });
+
+  // Make search icon clickable
+  const searchIcon = document.querySelector(".search-wrapper .search-icon");
+  if (searchIcon) {
+    searchIcon.addEventListener("click", () => {
+      const section = document.getElementById("courseList");
+      section.style.transform = "";
+      searchText();
+      document.getElementById("searchText").focus();
+    });
+
+    searchIcon.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        searchIcon.click();
+      }
+    });
+  }
 
   // Event delegation for course items
   courseList.addEventListener("click", (e) => {
