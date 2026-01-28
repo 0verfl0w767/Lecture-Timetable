@@ -910,6 +910,12 @@ window.onload = () => {
   if (applyButton) {
     applyButton.onclick = () => {
       try {
+        // 옵션 적용 시 검색 입력값을 현재 상태로 동기화하도록
+        // 입력을 비우고 옵션만 적용하면 이전 검색어가 남아 결과가 필터링되지 않는 문제를 방지함.
+        lastSearchTerm = document
+          .getElementById("searchText")
+          .value.trim()
+          .toLowerCase();
         renderCourseListWithFilters({ scrollHighlight: true });
       } catch (e) {
         console.error("필터 적용 중 오류:", e);
