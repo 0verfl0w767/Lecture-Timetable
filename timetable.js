@@ -478,13 +478,21 @@ function highlightClass(course) {
         const profName =
           course.교수명 && course.교수명.trim() ? course.교수명 : "미지정";
         const rawPlace = course.장소 && course.장소.trim() ? course.장소 : "";
-        let place = rawPlace
-          .replace(/강의실/gi, "")
-          .replace(/\s*[\(\（][^\)\）]*[\)\）]/g, "")
-          .replace(/호.*/, "호")
-          .trim();
-        if (place === "미지정") place = "";
-        firstCell.innerHTML = `${course.과목명} <div class="detail"><div class="meta">${course.강좌번호}·${profName}</div><div class="place" title="${place}">${place}</div></div>`;
+        // Support multiple locations separated by comma/、/;/ or / : split and normalize each segment.
+        const placesArray = rawPlace
+          .split(/\s*[,、\/;]\s*/)
+          .map((seg) =>
+            seg
+              .replace(/강의실/gi, "")
+              .replace(/\s*[\(\（][^\)\）]*[\)\）]/g, "")
+              .replace(/호.*/, "호")
+              .trim(),
+          )
+          .filter(Boolean);
+        let placeText = placesArray.join(", ");
+        let placeHtml = placesArray.map(escapeHtml).join(",<br>");
+        if (placeText === "미지정") placeText = "";
+        firstCell.innerHTML = `${course.과목명} <div class="detail"><div class="meta">${course.강좌번호}·${profName}</div><div class="place" title="${escapeHtml(placeText)}">${placeHtml}</div></div>`;
         firstCell.setAttribute("rowspan", endTime - startTime + 1);
       }
 
@@ -504,13 +512,21 @@ function highlightClass(course) {
         const profName =
           course.교수명 && course.교수명.trim() ? course.교수명 : "미지정";
         const rawPlace = course.장소 && course.장소.trim() ? course.장소 : "";
-        let place = rawPlace
-          .replace(/강의실/gi, "")
-          .replace(/\s*[\(\（][^\)\）]*[\)\）]/g, "")
-          .replace(/호.*/, "호")
-          .trim();
-        if (place === "미지정") place = "";
-        cell.innerHTML = `${course.과목명} <div class="detail"><div class="meta">${course.강좌번호}·${profName}</div><div class="place" title="${place}">${place}</div></div>`;
+        // Support multiple locations separated by comma/、/;/ or / : split and normalize each segment.
+        const placesArray = rawPlace
+          .split(/\s*[,、\/;]\s*/)
+          .map((seg) =>
+            seg
+              .replace(/강의실/gi, "")
+              .replace(/\s*[\(\（][^\)\）]*[\)\）]/g, "")
+              .replace(/호.*/, "호")
+              .trim(),
+          )
+          .filter(Boolean);
+        let placeText = placesArray.join(", ");
+        let placeHtml = placesArray.map(escapeHtml).join(",<br>");
+        if (placeText === "미지정") placeText = "";
+        cell.innerHTML = `${course.과목명} <div class="detail"><div class="meta">${course.강좌번호}·${profName}</div><div class="place" title="${escapeHtml(placeText)}">${placeHtml}</div></div>`;
       }
     }
   });
