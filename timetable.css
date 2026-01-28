@@ -835,6 +835,7 @@ td {
 /* Segmented controls: attached buttons with equal widths */
 .grade-toggle,
 .day-toggle,
+.credit-btn,
 .type-toggle {
   display: flex;
   gap: 0; /* no gaps between buttons */
@@ -853,8 +854,12 @@ td {
 .segmented button,
 .grade-btn,
 .type-btn,
+.credit-btn,
 .day-btn {
   flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 9.5px 12px;
   height: 40px;
   border: none;
@@ -865,6 +870,8 @@ td {
   box-sizing: border-box;
   font-weight: 700;
   text-align: center;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
 .segmented button + button {
@@ -970,6 +977,7 @@ td {
 
   .grade-btn,
   .type-btn,
+  .credit-btn,
   .day-btn {
     padding: 6px 8px;
     height: 28px;
@@ -978,6 +986,7 @@ td {
 
   .grade-btn.active,
   .type-btn.active,
+  .credit-btn.active,
   .day-btn.active {
     box-shadow: 0 4px 10px rgba(0, 76, 255, 0.12);
   }

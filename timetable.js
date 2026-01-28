@@ -322,6 +322,23 @@ function renderCourseListWithFilters({ scrollHighlight = true } = {}) {
     });
   }
 
+  const activeCreditBtns = Array.from(
+    document.querySelectorAll(".credit-btn.active"),
+  )
+    .map((b) => b.dataset.credit)
+    .filter((v) => v !== "");
+  if (activeCreditBtns.length > 0) {
+    const selectedCreditValues = activeCreditBtns
+      .map(Number)
+      .filter((v) => !Number.isNaN(v));
+    if (selectedCreditValues.length > 0) {
+      baseCourses = baseCourses.filter((course) => {
+        const c = Number(course.학점);
+        return !Number.isNaN(c) && selectedCreditValues.includes(c);
+      });
+    }
+  }
+
   const filtered = baseCourses.filter((course) =>
     matchesSearchTerm(course, lastSearchTerm),
   );
@@ -956,9 +973,10 @@ window.onload = () => {
     const gradeButtons = document.querySelectorAll(".grade-btn");
     if (!gradeButtons || gradeButtons.length === 0) return;
 
+    const allBtn = document.querySelector('.grade-btn[data-grade=""]');
+
     gradeButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
-        const allBtn = document.querySelector('.grade-btn[data-grade=""]');
         if (btn.dataset.grade === "") {
           gradeButtons.forEach((b) => {
             if (b !== btn) {
@@ -1018,13 +1036,54 @@ window.onload = () => {
     });
   })();
 
+  (function setupCreditButtons() {
+    const buttons = document.querySelectorAll(".credit-btn");
+    if (!buttons || buttons.length === 0) return;
+
+    const allBtn = document.querySelector('.credit-btn[data-credit=""]');
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (btn.dataset.credit === "") {
+          buttons.forEach((b) => {
+            if (b !== btn) {
+              b.classList.remove("active");
+              b.setAttribute("aria-pressed", "false");
+            }
+          });
+          btn.classList.add("active");
+          btn.setAttribute("aria-pressed", "true");
+          return;
+        }
+
+        const isActive = btn.classList.toggle("active");
+        btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+
+        const any = Array.from(buttons).some(
+          (b) => b.dataset.credit !== "" && b.classList.contains("active"),
+        );
+        if (any) {
+          if (allBtn) {
+            allBtn.classList.remove("active");
+            allBtn.setAttribute("aria-pressed", "false");
+          }
+        } else {
+          if (allBtn) {
+            allBtn.classList.add("active");
+            allBtn.setAttribute("aria-pressed", "true");
+          }
+        }
+      });
+    });
+  })();
+
   // Equalize widths of filter groups to match the 'type' group
   function equalizeFilterGroupWidths() {
     const ref = document.querySelector(".type-toggle");
     if (!ref) return;
     const width = ref.offsetWidth;
     const groups = document.querySelectorAll(
-      ".grade-toggle.segmented, .day-toggle.segmented",
+      ".grade-toggle.segmented, .day-toggle.segmented, .credit-buttons.segmented",
     );
     groups.forEach((g) => {
       g.style.width = width + "px";
