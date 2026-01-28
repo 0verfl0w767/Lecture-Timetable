@@ -4,12 +4,14 @@
   src: url(https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/NanumSquareEB.woff2)
     format("woff2");
 }
+
 @font-face {
   font-family: "NanumSquare";
   font-weight: 700;
   src: url(https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/NanumSquareB.woff2)
     format("woff2");
 }
+
 @font-face {
   font-family: "NanumSquare";
   font-weight: 400;
@@ -43,6 +45,34 @@
   .course-item {
     font-size: 1.1rem;
   }
+}
+
+.course-items > .no-results:only-child {
+  grid-column: 1 / -1;
+  justify-self: stretch;
+  align-self: stretch;
+  width: 100%;
+  max-width: none;
+  padding: 18px 16px;
+  box-sizing: border-box;
+  font-size: 1.05rem;
+  margin: 12px 14px;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  text-align: center;
+  color: #555;
+}
+
+.no-results {
+  padding: 18px 16px;
+  text-align: center;
+  color: #555;
+  font-size: 0.95rem;
+  background: #ffffff;
+  border-radius: 8px;
+  margin: 12px 14px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 [data-course-id] {

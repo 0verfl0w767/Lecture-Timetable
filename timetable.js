@@ -97,6 +97,16 @@ function shareLink(json) {
   return url;
 }
 
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 // Course list management
 function createCourseList() {
   const departments = {};
@@ -140,6 +150,17 @@ function updateCourseList(filteredCourses, { resetScroll = true } = {}) {
   }
 
   renderNextBatch({ reset: true });
+
+  if (currentFilteredCourses.length === 0) {
+    const noResult = document.createElement("div");
+    noResult.className = "no-results";
+    if (lastSearchTerm) {
+      noResult.innerHTML = `“<strong>${escapeHtml(lastSearchTerm)}</strong>” 에 대한 검색 결과가 없어요.`;
+    } else {
+      noResult.textContent = "검색 결과가 없어요.";
+    }
+    courseItemsContainer.appendChild(noResult);
+  }
 
   if (resetScroll) {
     courseList.scrollTop = 0;
