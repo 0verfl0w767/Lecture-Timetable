@@ -630,11 +630,50 @@ document.getElementById("downloadImageButton").onclick = async () => {
     preferCanvas: true,
   };
 
+  function dataURLtoBlob(dataurl) {
+    const arr = dataurl.split(",");
+    const mimeMatch = arr[0].match(/:(.*?);/);
+    const mime = mimeMatch ? mimeMatch[1] : "image/png";
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) u8arr[n] = bstr.charCodeAt(n);
+    return new Blob([u8arr], { type: mime });
+  }
+
+  const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent);
+
   try {
     const dataUrl = await htmlToImage.toPng(target, options);
+
+    // if (navigator.canShare && window.File) {
+    //   try {
+    //     const blob = dataURLtoBlob(dataUrl);
+    //     const file = new File([blob], "timetable.png", { type: blob.type });
+    //     if (navigator.canShare({ files: [file] })) {
+    //       await navigator.share({ files: [file], title: "Timetable" });
+    //       return;
+    //     }
+    //   } catch (e) {}
+    // }
+
+    if (isIOS) {
+      if (navigator.canShare && window.File) {
+        try {
+          const blob = dataURLtoBlob(dataUrl);
+          const file = new File([blob], "timetable.png", { type: blob.type });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: "Timetable" });
+            return;
+          }
+        } catch (e) {}
+      }
+    }
+
     const link = document.createElement("a");
     link.download = "timetable.png";
     link.href = dataUrl;
+    link.rel = "noopener";
     link.click();
   } catch (err) {
     console.error("이미지 저장 중 오류:", err);
