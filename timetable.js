@@ -376,6 +376,105 @@ function refreshHighlights({ scroll = true } = {}) {
 }
 
 // Timetable management
+function renderInfoCard() {
+  const card = document.getElementById("infoCard");
+  if (!card) return;
+  card.innerHTML = "";
+  // const title = document.createElement("h3");
+  // title.textContent = "담은 강의 정보";
+  // card.appendChild(title);
+  const credits = document.createElement("div");
+  credits.className = "credits";
+  credits.textContent = `총 학점: ${totalCredits}학점`;
+  card.appendChild(credits);
+
+  if (!selectedClasses || selectedClasses.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "선택한 과목이 아직 없어요.";
+    card.appendChild(empty);
+    return;
+  }
+
+  selectedClasses.forEach((course) => {
+    const entry = document.createElement("div");
+    entry.className = "course-entry";
+
+    const content = document.createElement("div");
+    content.className = "course-content";
+    content.style.flex = "1";
+    content.style.display = "flex";
+    content.style.flexDirection = "column";
+    content.style.gap = "6px";
+
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.textContent = course.과목명;
+
+    const sub = document.createElement("div");
+    sub.className = "sub";
+    const details = [];
+    if (course.비고 && course.비고.trim()) details.push(course.비고.trim());
+    if (course.이수구분 && course.이수구분.trim())
+      details.push(course.이수구분.trim());
+    sub.textContent = details.join(" · ");
+
+    const remove = document.createElement("button");
+    remove.className = "remove-btn";
+    remove.textContent = "삭제";
+    remove.onclick = (e) => {
+      e.stopPropagation();
+      const id = course.강좌번호;
+      selectedClasses = selectedClasses.filter((c) => c.강좌번호 !== id);
+      totalCredits -= parseInt(course.학점, 10);
+      document.getElementById("creditValue").textContent = `${totalCredits}`;
+
+      const cells = document.querySelectorAll(".cell[data-course-id]");
+      cells.forEach((cell) => {
+        if (cell.dataset.courseId === id) {
+          const courseToRemove = courses.find((c) => c.강좌번호 === id);
+          if (courseToRemove && courseToRemove.수업시간) {
+            const timeSlots = courseToRemove.수업시간.split(",");
+            timeSlots.forEach((slot) => {
+              const day = slot.charAt(0);
+              const timeRange = slot.slice(1);
+              if (timeRange.includes("~")) {
+                const [startTime, endTime] = timeRange.split("~").map(Number);
+                for (let i = startTime + 1; i <= endTime; i++) {
+                  const cellKey = `${day}${i}`;
+                  const c = timetableCells[cellKey];
+                  if (c) c.style.display = "table-cell";
+                }
+              }
+            });
+          }
+          cell.removeAttribute("data-course-id");
+          cell.removeAttribute("style");
+          cell.removeAttribute("rowspan");
+          cell.textContent = "";
+        }
+      });
+
+      const rows = document.querySelectorAll("#timetable tbody tr");
+      rows.forEach((row) => {
+        const td = row.querySelector("td[data-course-id]");
+        if (td && td.dataset.courseId === id) {
+          row.remove();
+        }
+      });
+
+      renderInfoCard();
+    };
+
+    content.appendChild(meta);
+    content.appendChild(sub);
+    entry.appendChild(content);
+    entry.appendChild(remove);
+
+    card.appendChild(entry);
+  });
+}
+
 function updateTimetable() {
   let maxClass = 0;
 
@@ -440,11 +539,13 @@ function highlightClass(course) {
       );
       totalCredits -= parseInt(course.학점, 10);
       document.getElementById("creditValue").textContent = `${totalCredits}`;
+      renderInfoCard();
     };
 
     selectedClasses.push(course);
     totalCredits += parseInt(course.학점, 10);
     document.getElementById("creditValue").textContent = `${totalCredits}`;
+    renderInfoCard();
     return;
   }
 
@@ -550,6 +651,7 @@ function highlightClass(course) {
 
   totalCredits += parseInt(course.학점, 10);
   document.getElementById("creditValue").textContent = `${totalCredits}`;
+  renderInfoCard();
 }
 
 // Cell click handlers
@@ -571,6 +673,7 @@ function initializeCellClickHandlers() {
           totalCredits -= parseInt(courseToRemove.학점, 10);
           document.getElementById("creditValue").textContent =
             `${totalCredits}`;
+          renderInfoCard();
         }
 
         cells.forEach((innerCell) => {
@@ -1110,6 +1213,7 @@ window.onload = () => {
   initializeTimetableCells();
   initializeCellClickHandlers();
   getTimetable();
+  renderInfoCard();
 
   // Search input Enter key handler
   document.getElementById("searchText").addEventListener("keydown", (e) => {

@@ -31,6 +31,123 @@
   .course-item {
     font-size: 1.2rem;
   }
+
+  html,
+  body {
+    max-width: none;
+  }
+
+  .main-layout {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0 12px;
+    box-sizing: border-box;
+  }
+
+  .timetable-container {
+    flex: 1 1 auto;
+    max-width: 840px;
+  }
+
+  .info-card {
+    display: block;
+    width: 380px;
+    background: linear-gradient(135deg, #ffffff 0%, #f9fbff 100%);
+    border: 1px solid #e8f0ff;
+    border-radius: 8px;
+    padding: 14px;
+    box-shadow: 0 8px 24px rgba(0, 76, 255, 0.06);
+    position: sticky;
+    top: 30px;
+    height: min-content;
+    box-sizing: border-box;
+  }
+
+  .info-card h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.05rem;
+    color: #0076ff;
+    font-weight: 800;
+  }
+
+  .info-card .credits {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-weight: 800;
+    color: #ffffff;
+    background: linear-gradient(90deg, #0076ff 0%, #005bb5 100%);
+    box-shadow: 0 6px 18px rgba(0, 118, 255, 0.12);
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-bottom: 10px;
+  }
+
+  .info-card .credits::before {
+    content: "📚";
+    display: inline-block;
+    margin-right: 6px;
+    font-size: 0.95rem;
+  }
+
+  .info-card .course-entry {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    padding: 8px;
+    border-radius: 3px;
+    background: #fafcff;
+    margin-bottom: 8px;
+    border-left: 3px solid #0076ff;
+  }
+
+  .info-card .course-entry .course-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .info-card .course-entry .meta {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #000;
+  }
+
+  .info-card .course-entry .sub {
+    font-size: 0.72rem;
+    color: #555;
+  }
+
+  .info-card .remove-btn {
+    background: transparent;
+    border: none;
+    color: #ff3b30;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+    margin-left: 12px;
+    align-self: flex-start;
+  }
+
+  .info-card .empty {
+    color: #777;
+    text-align: center;
+    padding: 12px;
+  }
+
+  .info-card .remove-btn {
+    background: transparent;
+    border: none;
+    color: #ff3b30;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+  }
 }
 
 @media (min-width: 918px) and (max-width: 1499px) {
@@ -84,11 +201,12 @@ html,
 body {
   font-family: "NanumSquare", sans-serif;
   font-weight: 800;
-  margin: 0 auto;
+  margin: 0;
   padding: 0;
   position: relative;
   background-color: #f0f4ff;
-  max-width: 800px;
+  max-width: none;
+  width: 100%;
 
   user-select: none;
   -webkit-user-select: none;
@@ -292,7 +410,6 @@ td {
 }
 
 @media (min-width: 800px) {
-  /* PC 화면 패치 */
   .modal-title div {
     font-size: 20pt !important;
   }
@@ -302,7 +419,7 @@ td {
   }
 
   td {
-    height: 90px;
+    height: 80px;
   }
 
   .detail {
@@ -746,6 +863,13 @@ td {
 .menu.show {
   left: 0;
   box-shadow: 8px 0 40px rgba(0, 76, 255, 0.25);
+}
+
+/* default: hide side info on small screens */
+@media (max-width: 1099px) {
+  .info-card {
+    display: none;
+  }
 }
 
 .menu h2 {
