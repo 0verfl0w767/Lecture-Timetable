@@ -409,14 +409,30 @@ function renderInfoCard() {
 
     const meta = document.createElement("div");
     meta.className = "meta";
-    meta.textContent = course.과목명;
+
+    const titleSpan = document.createElement("span");
+    titleSpan.className = "meta-title";
+    titleSpan.textContent = course.과목명;
+
+    if (course.학점 !== undefined && String(course.학점).trim() !== "") {
+      const creditBadge = document.createElement("span");
+      creditBadge.className = "meta-credit";
+      creditBadge.textContent = `${course.학점}학점`;
+      meta.appendChild(titleSpan);
+      meta.appendChild(creditBadge);
+    } else {
+      meta.appendChild(titleSpan);
+    }
 
     const sub = document.createElement("div");
     sub.className = "sub";
     const details = [];
-    if (course.비고 && course.비고.trim()) details.push(course.비고.trim());
-    if (course.이수구분 && course.이수구분.trim())
+    if (course.이수구분 && course.이수구분.trim()) {
       details.push(course.이수구분.trim());
+    }
+    if (course.비고 && course.비고.trim()) {
+      details.push(course.비고.trim());
+    }
     sub.textContent = details.join(" · ");
 
     const remove = document.createElement("button");
