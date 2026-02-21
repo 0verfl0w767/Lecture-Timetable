@@ -228,11 +228,11 @@
 html,
 body {
   font-family: "NanumSquare", sans-serif;
-  font-weight: 800;
+  font-weight: 700;
   margin: 0;
   padding: 0;
   position: relative;
-  background-color: #f0f4ff;
+  /* background-color: #f0f4ff; */
   max-width: none;
   width: 100%;
 
@@ -394,10 +394,12 @@ th {
   text-align: center;
   vertical-align: middle;
   color: #797979;
+  background-color: #f4f4f4;
 }
 
 th:first-child {
   border: none;
+  background-color: transparent;
 }
 
 td {
@@ -855,8 +857,9 @@ td {
   border-radius: 4px;
   background-color: rgb(51 93 255 / 10%);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 3px;
+  /* padding: 2px; */
   margin-inline: 2px;
+  font-weight: 800;
 }
 
 #menuButton {
@@ -1083,7 +1086,7 @@ td {
   }
 
   #creditMessage {
-    margin: 10px 8px;
+    /* margin: 10px 8px; */
     padding: 12px 14px;
     font-size: 13px;
     box-sizing: border-box;
@@ -1165,7 +1168,7 @@ td {
   }
 
   td {
-    height: 50px;
+    height: 65px;
   }
 
   .detail {
